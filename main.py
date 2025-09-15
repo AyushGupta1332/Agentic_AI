@@ -26,7 +26,7 @@ import re
 # --- CONFIGURATION ---
 
 # Hardcoded GROQ API Key
-GROQ_API_KEY = "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"
+GROQ_API_KEY = "Your-API-Key-Here"  # <-- Replace with your actual API key
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
