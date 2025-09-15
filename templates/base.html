@@ -1,34 +1,94 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Agentic AI Assistant{% endblock %}</title>
+    <title>{% block title %}Agentic AI - Your Intelligent Assistant{% endblock %}</title>
     
-    <!-- CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <!-- Meta tags for better SEO and sharing -->
+    <meta name="description" content="Agentic AI - Your intelligent assistant with web search, news, and financial capabilities">
+    <meta name="author" content="Agentic AI">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    
+    <!-- Modern font stack -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Feather Icons (lightweight and modern) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/feather-icons@4.29.0/dist/feather.css">
+    
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236366f1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='5'/><path d='M12 1v6m0 6v6m11-7h-6m-6 0H1'/></svg>">
     
-    {% block head %}{% endblock %}
+    <!-- Theme color for mobile browsers -->
+    <meta name="theme-color" content="#6366f1">
+    
+    <!-- Apple touch icon -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='20' fill='%236366f1'/><circle cx='90' cy='90' r='30' fill='white'/></svg>">
 </head>
 <body>
-    <div id="app">
+    <!-- Theme toggle (hidden by default, shown when JS loads) -->
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme" style="display: none;">
+        <i data-feather="sun" class="theme-icon light-icon"></i>
+        <i data-feather="moon" class="theme-icon dark-icon"></i>
+    </button>
+
+    <!-- Loading screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-container">
+            <div class="loading-logo">
+                <div class="logo-circle">
+                    <i data-feather="cpu"></i>
+                </div>
+                <div class="loading-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            <h3>Initializing Agentic AI</h3>
+            <p>Connecting to intelligence network...</p>
+        </div>
+    </div>
+
+    <!-- Main app container -->
+    <div id="app" class="app">
         {% block content %}{% endblock %}
     </div>
+
+    <!-- Toast notifications container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Modal backdrop -->
+    <div id="modal-backdrop" class="modal-backdrop"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked@5.1.2/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.29.0/dist/feather.min.js"></script>
     
-    <!-- JavaScript Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.2/marked.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <!-- Prism theme -->
+    <link id="prism-theme" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css">
     
-    <!-- Custom JavaScript -->
+    <!-- Main app script -->
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
     
-    {% block scripts %}{% endblock %}
+    <!-- Initialize feather icons -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+        });
+    </script>
 </body>
 </html>

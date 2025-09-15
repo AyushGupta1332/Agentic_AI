@@ -1,503 +1,742 @@
-// ===== AGENTIC AI FRONTEND APPLICATION =====
+// ===== MODERN AGENTIC AI APPLICATION =====
 class AgenticAI {
     constructor() {
+        // Core properties
         this.socket = null;
         this.isConnected = false;
         this.clientId = null;
-        this.isDebugMode = false;
-        this.currentTypingTimeout = null;
-        
-        // DOM Elements
-        this.elements = {
-            messagesContainer: document.getElementById('messages-container'),
-            messageInput: document.getElementById('message-input'),
-            sendBtn: document.getElementById('send-btn'),
-            clearBtn: document.getElementById('clear-btn'),
-            toggleDebugBtn: document.getElementById('toggle-debug'),
-            connectionStatus: document.getElementById('connection-status'),
-            statusIndicator: document.querySelector('.status-indicator'),
-            statusText: document.querySelector('.status-text'),
-            typingIndicator: document.getElementById('typing-indicator'),
-            statusUpdates: document.getElementById('status-updates'),
-            statusMessage: document.getElementById('status-message'),
-            debugPanel: document.getElementById('debug-panel'),
-            debugContent: document.getElementById('debug-content'),
-            closeDebugBtn: document.getElementById('close-debug'),
-            charCount: document.getElementById('char-count'),
-            loadingOverlay: document.getElementById('loading-overlay')
+
+        // UI state
+        this.isTyping = false;
+        this.messageHistory = [];
+        this.isInitialized = false;
+        this.initializationErrors = [];
+
+        // Performance tracking
+        this.performance = {
+            connectionStart: null,
+            lastMessageTime: null,
+            totalMessages: 0
         };
-        
-        // Templates
-        this.templates = {
-            userMessage: document.getElementById('user-message-template'),
-            aiMessage: document.getElementById('ai-message-template'),
-            errorMessage: document.getElementById('error-message-template')
-        };
-        
+
+        // DOM elements cache
+        this.elements = this.initializeElements();
+
+        // Initialize app
         this.init();
     }
-    
+
+    initializeElements() {
+        return {
+            // Core UI
+            app: document.getElementById('app'),
+            loadingScreen: document.getElementById('loading-screen'),
+
+            // Header
+            connectionBadge: document.getElementById('connection-badge'),
+            connectionText: document.querySelector('.connection-text'),
+            connectionDot: document.querySelector('.connection-dot'),
+
+            // Action buttons
+            clearBtn: document.getElementById('clear-btn'),
+
+            // Main chat
+            messagesArea: document.getElementById('messages-area'),
+            welcomeScreen: document.getElementById('welcome-screen'),
+            messagesContainer: document.getElementById('messages-container'),
+
+            // Input area
+            messageInput: document.getElementById('message-input'),
+            sendBtn: document.getElementById('send-btn'),
+            sendIcon: document.querySelector('.send-icon'),
+            loadingIcon: document.querySelector('.loading-icon'),
+            charCount: document.getElementById('char-count'),
+
+            // Indicators
+            typingIndicator: document.getElementById('typing-indicator'),
+            statusIndicator: document.getElementById('status-indicator'),
+            statusText: document.getElementById('status-text'),
+
+            // Templates
+            userMessageTemplate: document.getElementById('user-message-template'),
+            aiMessageTemplate: document.getElementById('ai-message-template'),
+            errorMessageTemplate: document.getElementById('error-message-template'),
+            sourceLinkTemplate: document.getElementById('source-link-template'),
+
+            // Toast container
+            toastContainer: document.getElementById('toast-container')
+        };
+    }
+
     // ===== INITIALIZATION =====
     init() {
         console.log('🚀 Initializing Agentic AI...');
-        this.showLoadingOverlay();
-        this.setupEventListeners();
-        this.connectSocket();
-        this.setupAutoResize();
-    }
-    
-    setupEventListeners() {
-        // Send message events
-        this.elements.sendBtn.addEventListener('click', () => this.sendMessage());
-        this.elements.messageInput.addEventListener('keydown', (e) => this.handleKeydown(e));
-        this.elements.messageInput.addEventListener('input', () => this.handleInputChange());
-        
-        // Control buttons
-        this.elements.clearBtn.addEventListener('click', () => this.clearConversation());
-        this.elements.toggleDebugBtn.addEventListener('click', () => this.toggleDebugPanel());
-        this.elements.closeDebugBtn.addEventListener('click', () => this.toggleDebugPanel());
-        
-        // Auto-focus input when page loads
-        window.addEventListener('load', () => {
-            this.elements.messageInput.focus();
-            this.hideLoadingOverlay();
-        });
-        
-        // Handle window resize for responsive design
-        window.addEventListener('resize', () => this.handleResize());
-    }
-    
-    setupAutoResize() {
-        const input = this.elements.messageInput;
-        input.addEventListener('input', () => {
-            input.style.height = 'auto';
-            input.style.height = Math.min(input.scrollHeight, 120) + 'px';
-        });
-    }
-    
-    // ===== SOCKET CONNECTION =====
-    connectSocket() {
         try {
-            this.socket = io({
-                transports: ['websocket', 'polling']
-            });
-            
-            this.socket.on('connect', () => this.handleConnect());
-            this.socket.on('disconnect', () => this.handleDisconnect());
-            this.socket.on('connected', (data) => this.handleConnected(data));
-            this.socket.on('status_update', (data) => this.handleStatusUpdate(data));
-            this.socket.on('final_response', (data) => this.handleFinalResponse(data));
-            this.socket.on('debug_info', (data) => this.handleDebugInfo(data));
-            this.socket.on('error', (data) => this.handleError(data));
-            this.socket.on('history_cleared', (data) => this.handleHistoryCleared(data));
-            
+            this.setupEventListeners();
+            this.setupQuickStarters();
+
+            // Connect socket with timeout fallback
+            this.connectSocket();
+
+            // Fallback to hide loading screen after 3 seconds regardless
+            setTimeout(() => {
+                if (!this.isInitialized) {
+                    console.warn('⚠️ Initialization timeout, forcing completion');
+                    this.completeInitialization();
+                }
+            }, 3000);
+
+            console.log('✅ Agentic AI basic initialization completed');
         } catch (error) {
-            console.error('Failed to connect to socket:', error);
-            this.showError('Failed to connect to server. Please refresh the page.');
+            console.error('❌ Initialization error:', error);
+            this.initializationErrors.push(error);
+            this.completeInitialization();
         }
     }
-    
-    handleConnect() {
-        console.log('🔌 Connected to server');
-        this.isConnected = true;
-        this.updateConnectionStatus('connected', 'Connected');
+
+    completeInitialization() {
+        if (this.isInitialized) return;
+
+        this.isInitialized = true;
+        this.hideLoadingScreen();
+
+        // Focus input after a delay
+        setTimeout(() => {
+            try {
+                if (this.elements.messageInput) {
+                    this.elements.messageInput.focus();
+                }
+            } catch (error) {
+                console.debug('Focus error (ignored):', error);
+            }
+        }, 300);
+
+        if (this.initializationErrors.length > 0) {
+            console.warn('Initialization completed with warnings:', this.initializationErrors);
+        } else {
+            console.log('✅ Initialization completed successfully');
+        }
     }
-    
-    handleDisconnect() {
-        console.log('🔌 Disconnected from server');
-        this.isConnected = false;
-        this.updateConnectionStatus('disconnected', 'Disconnected');
-        this.hideTypingIndicator();
-        this.hideStatusUpdates();
+
+    setupEventListeners() {
+        try {
+            // Message input
+            if (this.elements.messageInput) {
+                this.elements.messageInput.addEventListener('input', () => this.handleInputChange());
+                this.elements.messageInput.addEventListener('keydown', (e) => this.handleInputKeydown(e));
+                this.elements.messageInput.addEventListener('paste', () => {
+                    setTimeout(() => this.handleInputChange(), 0);
+                });
+            }
+
+            // Send button
+            if (this.elements.sendBtn) {
+                this.elements.sendBtn.addEventListener('click', () => this.sendMessage());
+            }
+
+            // Clear button
+            if (this.elements.clearBtn) {
+                this.elements.clearBtn.addEventListener('click', () => this.clearConversation());
+            }
+
+            // Window events
+            window.addEventListener('beforeunload', () => this.handleBeforeUnload());
+            window.addEventListener('focus', () => this.handleWindowFocus());
+            document.addEventListener('visibilitychange', () => this.handleVisibilityChange());
+
+            // Global keyboard shortcuts
+            document.addEventListener('keydown', (e) => this.handleGlobalKeydown(e));
+        } catch (error) {
+            console.warn('Event listeners setup error:', error);
+            this.initializationErrors.push(error);
+        }
     }
-    
-    handleConnected(data) {
-        console.log('✅ Connection established:', data);
-        this.clientId = data.client_id;
-        this.showNotification(data.message || 'Connected to Agentic AI', 'success');
-        this.hideLoadingOverlay();
+
+    setupQuickStarters() {
+        try {
+            const starterBtns = document.querySelectorAll('.starter-btn');
+            starterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const query = btn.dataset.query;
+                    if (query && this.elements.messageInput) {
+                        this.elements.messageInput.value = query;
+                        this.handleInputChange();
+                        this.elements.messageInput.focus();
+                    }
+                });
+            });
+        } catch (error) {
+            console.warn('Quick starters setup error:', error);
+            this.initializationErrors.push(error);
+        }
     }
-    
+
+    // ===== SOCKET CONNECTION =====
+    connectSocket() {
+        if (typeof io === 'undefined') {
+            console.warn('❌ Socket.IO not loaded - running in offline mode');
+            this.updateConnectionStatus('disconnected');
+            this.completeInitialization();
+            return;
+        }
+
+        this.performance.connectionStart = performance.now();
+        this.updateConnectionStatus('connecting');
+
+        try {
+            this.socket = io({
+                transports: ['websocket', 'polling'],
+                timeout: 10000,
+                reconnection: true,
+                reconnectionAttempts: 3,
+                reconnectionDelay: 1000,
+                reconnectionDelayMax: 3000
+            });
+
+            this.setupSocketEvents();
+        } catch (error) {
+            console.error('Socket connection failed:', error);
+            this.updateConnectionStatus('disconnected');
+            this.completeInitialization();
+        }
+    }
+
+    setupSocketEvents() {
+        // Connection success
+        this.socket.on('connect', () => {
+            const connectionTime = performance.now() - this.performance.connectionStart;
+            console.log(`⚡ Connected in ${connectionTime.toFixed(2)}ms`);
+            this.isConnected = true;
+            this.updateConnectionStatus('connected');
+        });
+
+        // Disconnection
+        this.socket.on('disconnect', (reason) => {
+            console.log('🔌 Disconnected:', reason);
+            this.isConnected = false;
+            this.updateConnectionStatus('disconnected');
+            this.hideTypingIndicator();
+            this.hideStatusIndicator();
+        });
+
+        // Server connection confirmed
+        this.socket.on('connected', (data) => {
+            console.log('✅ Server connection established:', data);
+            this.clientId = data.client_id;
+            
+            if (!this.messageHistory.length) {
+                this.showToast('Connected to Agentic AI', 'success', 3000);
+            }
+            
+            this.completeInitialization();
+        });
+
+        // Message events
+        this.socket.on('status_update', (data) => {
+            this.showStatusIndicator(data.message);
+        });
+
+        this.socket.on('final_response', (data) => {
+            this.handleFinalResponse(data);
+        });
+
+        this.socket.on('error', (data) => {
+            this.handleSocketError(data);
+        });
+
+        this.socket.on('history_cleared', (data) => {
+            this.clearMessages();
+            this.showWelcomeScreen();
+            this.showToast(data.message || 'Conversation cleared', 'success', 2000);
+        });
+
+        // Connection error handling
+        this.socket.on('connect_error', (error) => {
+            console.warn('Connection error:', error);
+            this.updateConnectionStatus('disconnected');
+            setTimeout(() => this.completeInitialization(), 1000);
+        });
+
+        this.socket.on('reconnect', (attemptNumber) => {
+            console.log(`🔄 Reconnected after ${attemptNumber} attempts`);
+            this.showToast('Reconnected successfully!', 'success', 2000);
+        });
+
+        this.socket.on('reconnect_failed', () => {
+            console.warn('❌ Failed to reconnect');
+            this.showToast('Connection lost. Working in offline mode.', 'warning', 3000);
+        });
+    }
+
+    // ===== UI UPDATES =====
+    hideLoadingScreen() {
+        if (this.elements.loadingScreen) {
+            this.elements.loadingScreen.style.opacity = '0';
+            this.elements.loadingScreen.style.pointerEvents = 'none';
+            setTimeout(() => {
+                this.elements.loadingScreen.style.display = 'none';
+            }, 300);
+        }
+    }
+
+    updateConnectionStatus(status) {
+        if (!this.elements.connectionBadge) return;
+
+        // Remove all status classes
+        this.elements.connectionBadge.className = 'connection-badge';
+        // Add new status class
+        this.elements.connectionBadge.classList.add(status);
+
+        // Update text
+        const statusText = {
+            connecting: 'Connecting...',
+            connected: 'Connected',
+            disconnected: 'Offline'
+        };
+
+        if (this.elements.connectionText) {
+            this.elements.connectionText.textContent = statusText[status] || 'Unknown';
+        }
+    }
+
     // ===== MESSAGE HANDLING =====
     sendMessage() {
-        const message = this.elements.messageInput.value.trim();
-        if (!message || !this.isConnected) return;
-        
-        // Add user message to UI immediately
+        const message = this.elements.messageInput?.value.trim();
+        if (!message) {
+            return;
+        }
+
+        if (!this.isConnected) {
+            this.showToast('Not connected to server. Please check your connection.', 'warning', 3000);
+            return;
+        }
+
+        // Track performance
+        this.performance.lastMessageTime = performance.now();
+        this.performance.totalMessages++;
+
+        // Hide welcome screen
+        this.hideWelcomeScreen();
+
+        // Add user message
         this.addUserMessage(message);
-        
-        // Send to server
-        this.socket.emit('send_message', { message: message });
-        
-        // Clear input and show typing indicator
+
+        // Clear input and update UI
         this.elements.messageInput.value = '';
-        this.elements.messageInput.style.height = 'auto';
-        this.updateCharCount();
-        this.updateSendButton();
+        this.handleInputChange();
         this.showTypingIndicator();
-        
-        // Disable input temporarily
         this.setInputEnabled(false);
+
+        // Send to server
+        try {
+            this.socket.emit('send_message', { message });
+            
+            // Store in history
+            this.messageHistory.push({
+                type: 'user',
+                message,
+                timestamp: Date.now()
+            });
+        } catch (error) {
+            console.error('Error sending message:', error);
+            this.handleSocketError({ message: 'Failed to send message. Please try again.' });
+        }
+
+        // Auto-resize input
+        this.elements.messageInput.style.height = 'auto';
     }
-    
-    handleKeydown(event) {
+
+    handleInputChange() {
+        if (!this.elements.messageInput) return;
+
+        const value = this.elements.messageInput.value;
+        const length = value.length;
+        const maxLength = 4000;
+
+        // Update character count
+        if (this.elements.charCount) {
+            this.elements.charCount.textContent = length;
+
+            // Add warning class if approaching limit
+            if (length > maxLength * 0.8) {
+                this.elements.charCount.style.color = 'var(--color-warning-500)';
+            } else {
+                this.elements.charCount.style.color = 'var(--text-muted)';
+            }
+        }
+
+        // Update send button
+        this.updateSendButton();
+
+        // Auto-resize textarea
+        try {
+            this.elements.messageInput.style.height = 'auto';
+            this.elements.messageInput.style.height = Math.min(this.elements.messageInput.scrollHeight, 128) + 'px';
+        } catch (error) {
+            // Ignore resize errors
+        }
+    }
+
+    handleInputKeydown(event) {
         if (event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault();
             this.sendMessage();
+        } else if (event.key === 'Escape') {
+            try {
+                this.elements.messageInput.blur();
+            } catch (error) {
+                // Ignore blur errors
+            }
         }
     }
-    
-    handleInputChange() {
-        this.updateCharCount();
+
+    updateSendButton() {
+        if (!this.elements.sendBtn || !this.elements.messageInput) return;
+
+        const hasMessage = this.elements.messageInput.value.trim().length > 0;
+        const canSend = hasMessage && this.isConnected && !this.isTyping;
+
+        this.elements.sendBtn.disabled = !canSend;
+
+        if (canSend) {
+            this.elements.sendBtn.classList.add('ready');
+        } else {
+            this.elements.sendBtn.classList.remove('ready');
+        }
+    }
+
+    setInputEnabled(enabled) {
+        if (this.elements.messageInput) {
+            this.elements.messageInput.disabled = !enabled;
+        }
+        
         this.updateSendButton();
+        
+        if (enabled) {
+            try {
+                this.elements.messageInput?.focus();
+            } catch (error) {
+                // Ignore focus errors
+            }
+        }
     }
-    
-    // ===== UI UPDATES =====
+
+    // ===== MESSAGE DISPLAY =====
     addUserMessage(message) {
-        const messageElement = this.createMessageElement(this.templates.userMessage, {
-            text: message,
-            time: this.getCurrentTime()
-        });
-        this.appendMessage(messageElement);
-    }
-    
-    addAIMessage(data) {
-        const messageElement = this.createMessageElement(this.templates.aiMessage, {
-            text: data.response,
-            time: this.getCurrentTime(),
-            confidence: data.confidence,
-            processingTime: data.processing_time,
-            method: data.method,
-            sources: data.sources
-        });
-        this.appendMessage(messageElement);
-    }
-    
-    addErrorMessage(message) {
-        const messageElement = this.createMessageElement(this.templates.errorMessage, {
-            text: message,
-            time: this.getCurrentTime()
-        });
-        this.appendMessage(messageElement);
-    }
-    
-    createMessageElement(template, data) {
-        const messageElement = template.content.cloneNode(true);
+        if (!this.elements.userMessageTemplate || !this.elements.messagesContainer) return;
+
+        const messageElement = this.elements.userMessageTemplate.content.cloneNode(true);
         const textElement = messageElement.querySelector('.message-text');
         const timeElement = messageElement.querySelector('.message-time');
-        
-        // Set message text (render as markdown for AI messages)
-        if (template === this.templates.aiMessage) {
-            textElement.innerHTML = marked.parse(data.text);
-            this.highlightCode(textElement);
-        } else {
-            textElement.textContent = data.text;
-        }
-        
-        // Set timestamp
-        timeElement.textContent = data.time;
-        
-        // Add AI-specific metadata
-        if (data.confidence !== undefined) {
-            const confidenceElement = messageElement.querySelector('.confidence-score');
-            confidenceElement.textContent = `${data.confidence}%`;
-            confidenceElement.style.display = 'inline-flex';
-        }
-        
-        if (data.processingTime !== undefined) {
-            const processingElement = messageElement.querySelector('.processing-time');
-            processingElement.textContent = `${data.processingTime}s`;
-            processingElement.style.display = 'inline';
-        }
-        
-        if (data.method) {
-            const methodElement = messageElement.querySelector('.method-used');
-            methodElement.textContent = data.method;
-            methodElement.style.display = 'inline';
-        }
-        
-        // Add sources
-        if (data.sources && data.sources.length > 0) {
-            const sourcesElement = messageElement.querySelector('.message-sources');
-            sourcesElement.innerHTML = '<h4>Sources:</h4>' + 
-                data.sources.map(source => 
-                    `<a href="${source.url}" target="_blank" rel="noopener noreferrer" class="source-link">
-                        📄 ${source.name || 'Source'}
-                    </a>`
-                ).join('');
-            sourcesElement.style.display = 'block';
-        }
-        
-        return messageElement;
-    }
-    
-    appendMessage(messageElement) {
+
+        if (textElement) textElement.textContent = message;
+        if (timeElement) timeElement.textContent = new Date().toLocaleTimeString();
+
         this.elements.messagesContainer.appendChild(messageElement);
         this.scrollToBottom();
     }
-    
-    // ===== STATUS HANDLING =====
-    handleStatusUpdate(data) {
-        console.log('📊 Status update:', data.message);
-        this.showStatusUpdate(data.message);
-    }
-    
+
     handleFinalResponse(data) {
-        console.log('✅ Received final response:', data);
         this.hideTypingIndicator();
-        this.hideStatusUpdates();
-        this.addAIMessage(data);
+        this.hideStatusIndicator();
         this.setInputEnabled(true);
-        this.elements.messageInput.focus();
-    }
-    
-    handleDebugInfo(data) {
-        console.log('🐛 Debug info:', data);
-        if (this.isDebugMode) {
-            this.addDebugInfo(data.title, data.content);
+        this.isTyping = false;
+
+        if (!this.elements.aiMessageTemplate || !this.elements.messagesContainer) return;
+
+        const messageElement = this.elements.aiMessageTemplate.content.cloneNode(true);
+        const textElement = messageElement.querySelector('.message-text');
+        const timeElement = messageElement.querySelector('.message-time');
+        const confidenceElement = messageElement.querySelector('.confidence-badge');
+        const processingElement = messageElement.querySelector('.processing-time');
+        const methodElement = messageElement.querySelector('.method-badge');
+        const sourcesContainer = messageElement.querySelector('.message-sources');
+
+        // Set response text
+        if (textElement && data.response) {
+            textElement.innerHTML = this.formatMarkdown(data.response);
         }
-    }
-    
-    handleError(data) {
-        console.error('❌ Error:', data.message);
-        this.hideTypingIndicator();
-        this.hideStatusUpdates();
-        this.addErrorMessage(data.message);
-        this.setInputEnabled(true);
-        this.showNotification('Error: ' + data.message, 'error');
-    }
-    
-    handleHistoryCleared(data) {
-        console.log('🗑️ History cleared:', data.message);
-        this.clearMessages();
-        this.showNotification(data.message, 'success');
-    }
-    
-    // ===== UI HELPER METHODS =====
-    showTypingIndicator() {
-        this.elements.typingIndicator.style.display = 'flex';
+
+        // Set timestamp
+        if (timeElement) {
+            timeElement.textContent = new Date().toLocaleTimeString();
+        }
+
+        // Set confidence
+        if (confidenceElement && data.confidence) {
+            confidenceElement.style.display = 'inline-flex';
+            const confidenceValue = confidenceElement.querySelector('.confidence-value');
+            if (confidenceValue) confidenceValue.textContent = `${data.confidence}%`;
+        }
+
+        // Set processing time
+        if (processingElement && data.processing_time) {
+            processingElement.style.display = 'inline-flex';
+            const timeValue = processingElement.querySelector('.time-value');
+            if (timeValue) timeValue.textContent = `${data.processing_time}s`;
+        }
+
+        // Set method
+        if (methodElement && data.method) {
+            methodElement.style.display = 'inline-flex';
+            const methodValue = methodElement.querySelector('.method-value');
+            if (methodValue) methodValue.textContent = data.method;
+        }
+
+        // Add sources
+        if (sourcesContainer && data.sources && data.sources.length > 0) {
+            sourcesContainer.style.display = 'block';
+            const sourcesList = sourcesContainer.querySelector('.sources-list');
+            if (sourcesList) {
+                sourcesList.innerHTML = '';
+                data.sources.forEach(source => {
+                    const sourceElement = this.createSourceLink(source);
+                    if (sourceElement) sourcesList.appendChild(sourceElement);
+                });
+            }
+        }
+
+        this.elements.messagesContainer.appendChild(messageElement);
         this.scrollToBottom();
     }
-    
+
+    createSourceLink(source) {
+        if (!this.elements.sourceLinkTemplate) return null;
+
+        const linkElement = this.elements.sourceLinkTemplate.content.cloneNode(true);
+        const link = linkElement.querySelector('.source-link');
+        const title = linkElement.querySelector('.source-title');
+        const domain = linkElement.querySelector('.source-domain');
+
+        if (link && source.url) {
+            link.href = source.url;
+        }
+
+        if (title && source.name) {
+            title.textContent = source.name;
+        }
+
+        if (domain && source.url) {
+            try {
+                const url = new URL(source.url);
+                domain.textContent = url.hostname;
+            } catch (error) {
+                domain.textContent = '';
+            }
+        }
+
+        return linkElement;
+    }
+
+    // ===== INDICATORS =====
+    showTypingIndicator() {
+        this.isTyping = true;
+        this.updateSendButton();
+        if (this.elements.typingIndicator) {
+            this.elements.typingIndicator.style.display = 'flex';
+        }
+        this.scrollToBottom();
+    }
+
     hideTypingIndicator() {
-        this.elements.typingIndicator.style.display = 'none';
-    }
-    
-    showStatusUpdates() {
-        this.elements.statusUpdates.style.display = 'block';
-    }
-    
-    hideStatusUpdates() {
-        this.elements.statusUpdates.style.display = 'none';
-    }
-    
-    showStatusUpdate(message) {
-        this.elements.statusMessage.textContent = message;
-        this.showStatusUpdates();
-    }
-    
-    updateConnectionStatus(status, text) {
-        this.elements.statusIndicator.className = `fas fa-circle status-indicator ${status}`;
-        this.elements.statusText.textContent = text;
-    }
-    
-    setInputEnabled(enabled) {
-        this.elements.messageInput.disabled = !enabled;
-        this.elements.sendBtn.disabled = !enabled || !this.elements.messageInput.value.trim();
-        
-        if (enabled) {
-            this.elements.messageInput.focus();
+        this.isTyping = false;
+        this.updateSendButton();
+        if (this.elements.typingIndicator) {
+            this.elements.typingIndicator.style.display = 'none';
         }
     }
-    
-    updateSendButton() {
-        const hasText = this.elements.messageInput.value.trim().length > 0;
-        this.elements.sendBtn.disabled = !hasText || !this.isConnected;
+
+    showStatusIndicator(message) {
+        if (this.elements.statusIndicator) {
+            this.elements.statusIndicator.style.display = 'flex';
+        }
+        if (this.elements.statusText) {
+            this.elements.statusText.textContent = message;
+        }
+        this.scrollToBottom();
     }
-    
-    updateCharCount() {
-        const count = this.elements.messageInput.value.length;
-        this.elements.charCount.textContent = `${count}/2000`;
-        
-        if (count > 1800) {
-            this.elements.charCount.style.color = 'var(--error-color)';
-        } else if (count > 1500) {
-            this.elements.charCount.style.color = 'var(--warning-color)';
-        } else {
-            this.elements.charCount.style.color = 'var(--text-muted)';
+
+    hideStatusIndicator() {
+        if (this.elements.statusIndicator) {
+            this.elements.statusIndicator.style.display = 'none';
         }
     }
-    
-    scrollToBottom() {
-        requestAnimationFrame(() => {
-            this.elements.messagesContainer.scrollTop = this.elements.messagesContainer.scrollHeight;
-        });
+
+    // ===== SCREEN MANAGEMENT =====
+    hideWelcomeScreen() {
+        if (this.elements.welcomeScreen) {
+            this.elements.welcomeScreen.style.display = 'none';
+        }
+        if (this.elements.messagesContainer) {
+            this.elements.messagesContainer.style.display = 'block';
+        }
     }
-    
+
+    showWelcomeScreen() {
+        if (this.elements.welcomeScreen) {
+            this.elements.welcomeScreen.style.display = 'flex';
+        }
+        if (this.elements.messagesContainer) {
+            this.elements.messagesContainer.style.display = 'none';
+        }
+    }
+
     // ===== ACTIONS =====
     clearConversation() {
-        if (confirm('Are you sure you want to clear the conversation history?')) {
+        if (this.socket && this.isConnected) {
             this.socket.emit('clear_history');
-        }
-    }
-    
-    clearMessages() {
-        // Keep the welcome message, remove everything else
-        const messages = this.elements.messagesContainer.querySelectorAll('.message:not(.welcome-message)');
-        messages.forEach(message => message.remove());
-    }
-    
-    toggleDebugPanel() {
-        this.isDebugMode = !this.isDebugMode;
-        this.elements.debugPanel.classList.toggle('active');
-        
-        if (this.isDebugMode) {
-            this.elements.toggleDebugBtn.innerHTML = '<i class="fas fa-bug"></i> Hide Debug';
         } else {
-            this.elements.toggleDebugBtn.innerHTML = '<i class="fas fa-bug"></i> Debug';
+            this.clearMessages();
+            this.showWelcomeScreen();
+            this.showToast('Conversation cleared locally', 'success', 2000);
         }
     }
-    
-    addDebugInfo(title, content) {
-        const debugEntry = document.createElement('div');
-        debugEntry.className = 'debug-entry';
-        debugEntry.innerHTML = `
-            <h4>${title}</h4>
-            <pre><code>${JSON.stringify(content, null, 2)}</code></pre>
-            <hr>
-        `;
-        this.elements.debugContent.appendChild(debugEntry);
-        this.elements.debugContent.scrollTop = this.elements.debugContent.scrollHeight;
+
+    clearMessages() {
+        if (this.elements.messagesContainer) {
+            this.elements.messagesContainer.innerHTML = '';
+        }
+        this.messageHistory = [];
     }
-    
-    // ===== UTILITY METHODS =====
-    getCurrentTime() {
-        return new Date().toLocaleTimeString([], { 
-            hour: '2-digit', 
-            minute: '2-digit' 
-        });
-    }
-    
-    highlightCode(element) {
-        // Highlight code blocks using Prism.js
-        const codeBlocks = element.querySelectorAll('pre code');
-        codeBlocks.forEach(block => {
-            Prism.highlightElement(block);
-        });
-    }
-    
-    showNotification(message, type = 'info') {
-        // Simple notification system
-        const notification = document.createElement('div');
-        notification.className = `notification notification-${type}`;
-        notification.innerHTML = `
-            <div class="notification-content">
-                <span class="notification-message">${message}</span>
-                <button class="notification-close">&times;</button>
-            </div>
-        `;
-        
-        // Add to page
-        document.body.appendChild(notification);
-        
-        // Auto remove after 5 seconds
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.remove();
+
+    // ===== ERROR HANDLING =====
+    handleSocketError(data) {
+        this.hideTypingIndicator();
+        this.hideStatusIndicator();
+        this.setInputEnabled(true);
+        this.showToast(data?.message || 'An error occurred', 'error', 3000);
+
+        // Add error message to chat
+        if (this.elements.errorMessageTemplate && this.elements.messagesContainer) {
+            const messageElement = this.elements.errorMessageTemplate.content.cloneNode(true);
+            const textElement = messageElement.querySelector('.message-text');
+            const timeElement = messageElement.querySelector('.message-time');
+
+            if (textElement) {
+                textElement.textContent = data?.message || 'An error occurred while processing your request.';
             }
-        }, 5000);
-        
-        // Manual close
-        notification.querySelector('.notification-close').addEventListener('click', () => {
-            notification.remove();
-        });
-        
-        // Add styles if not already added
-        if (!document.querySelector('#notification-styles')) {
-            const styles = document.createElement('style');
-            styles.id = 'notification-styles';
-            styles.textContent = `
-                .notification {
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    max-width: 400px;
-                    background: var(--surface-color);
-                    border: 1px solid var(--border-color);
-                    border-radius: var(--border-radius);
-                    box-shadow: var(--shadow-lg);
-                    z-index: 10000;
-                    animation: slideInRight 0.3s ease-out;
-                }
-                .notification-success { border-left: 4px solid var(--success-color); }
-                .notification-error { border-left: 4px solid var(--error-color); }
-                .notification-warning { border-left: 4px solid var(--warning-color); }
-                .notification-info { border-left: 4px solid var(--info-color); }
-                .notification-content {
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
-                    padding: var(--spacing-md);
-                    color: var(--text-primary);
-                }
-                .notification-close {
-                    background: none;
-                    border: none;
-                    color: var(--text-muted);
-                    cursor: pointer;
-                    font-size: 1.2rem;
-                    padding: 0;
-                    margin-left: var(--spacing-sm);
-                }
-                .notification-close:hover { color: var(--text-primary); }
-                @keyframes slideInRight {
-                    from { transform: translateX(100%); opacity: 0; }
-                    to { transform: translateX(0); opacity: 1; }
-                }
-            `;
-            document.head.appendChild(styles);
+            if (timeElement) {
+                timeElement.textContent = new Date().toLocaleTimeString();
+            }
+
+            this.elements.messagesContainer.appendChild(messageElement);
+            this.scrollToBottom();
         }
     }
-    
-    showError(message) {
-        this.showNotification(message, 'error');
-        this.hideLoadingOverlay();
-    }
-    
-    showLoadingOverlay() {
-        this.elements.loadingOverlay.style.display = 'flex';
-    }
-    
-    hideLoadingOverlay() {
-        this.elements.loadingOverlay.style.display = 'none';
-    }
-    
-    handleResize() {
-        // Handle responsive design changes
-        this.scrollToBottom();
-    }
-}
 
-// ===== INITIALIZE APPLICATION =====
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('🎯 DOM loaded, initializing Agentic AI...');
-    window.agenticAI = new AgenticAI();
-});
+    // ===== UTILITIES =====
+    showToast(message, type = 'info', duration = 4000) {
+        if (!this.isInitialized) {
+            console.log(`Toast (suppressed during init): ${message} (${type})`);
+            return;
+        }
 
-// ===== GLOBAL ERROR HANDLING =====
-window.addEventListener('error', (event) => {
-    console.error('Global error:', event.error);
-    if (window.agenticAI) {
-        window.agenticAI.showError('An unexpected error occurred. Please refresh the page.');
+        if (!this.elements.toastContainer) {
+            console.log(`Toast: ${message} (${type})`);
+            return;
+        }
+
+        try {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+
+            const icon = this.getToastIcon(type);
+            const closeBtn = document.createElement('button');
+            closeBtn.className = 'toast-close';
+            closeBtn.innerHTML = '✕';
+
+            toast.innerHTML = `
+                <div class="toast-icon">${icon}</div>
+                <div class="toast-content">${message}</div>
+                ${closeBtn.outerHTML}
+            `;
+
+            this.elements.toastContainer.appendChild(toast);
+
+            // Auto remove
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.remove();
+                }
+            }, duration);
+
+            // Manual close
+            const closeButton = toast.querySelector('.toast-close');
+            if (closeButton) {
+                closeButton.addEventListener('click', () => {
+                    toast.remove();
+                });
+            }
+        } catch (error) {
+            console.error('Toast error:', error);
+        }
     }
-});
 
-// ===== SERVICE WORKER REGISTRATION (Optional) =====
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        // Uncomment if you want to add PWA support
-        // navigator.serviceWorker.register('/sw.js')
-        //     .then(registration => console.log('SW registered:', registration))
-        //     .catch(registrationError => console.log('SW registration failed:', registrationError));
-    });
+    getToastIcon(type) {
+        const icons = {
+            success: '✓',
+            error: '✕',
+            warning: '⚠️',
+            info: 'ℹ️'
+        };
+        return icons[type] || icons.info;
+    }
+
+    formatMarkdown(text) {
+        // Basic markdown formatting
+        return text
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.*?)\*/g, '<em>$1</em>')
+            .replace(/`(.*?)`/g, '<code>$1</code>')
+            .replace(/\n/g, '<br>');
+    }
+
+    scrollToBottom() {
+        setTimeout(() => {
+            if (this.elements.messagesArea) {
+                this.elements.messagesArea.scrollTop = this.elements.messagesArea.scrollHeight;
+            }
+        }, 100);
+    }
+
+    // ===== EVENT HANDLERS =====
+    handleBeforeUnload() {
+        if (this.socket && this.isConnected) {
+            this.socket.disconnect();
+        }
+    }
+
+    handleWindowFocus() {
+        if (this.elements.messageInput && this.isInitialized) {
+            try {
+                this.elements.messageInput.focus();
+            } catch (error) {
+                // Ignore focus errors
+            }
+        }
+    }
+
+    handleVisibilityChange() {
+        if (!document.hidden && this.elements.messageInput && this.isInitialized) {
+            try {
+                this.elements.messageInput.focus();
+            } catch (error) {
+                // Ignore focus errors
+            }
+        }
+    }
+
+    handleGlobalKeydown(event) {
+        // Ctrl/Cmd + K to focus input
+        if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
+            event.preventDefault();
+            if (this.elements.messageInput) {
+                try {
+                    this.elements.messageInput.focus();
+                } catch (error) {
+                    // Ignore focus errors
+                }
+            }
+        }
+    }
 }

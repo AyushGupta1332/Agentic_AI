@@ -1,154 +1,308 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentic AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app" id="app">
+        <!-- Loading Screen -->
+        <div class="loading-screen" id="loading-screen">
+            <div class="loading-container">
+                <div class="loading-logo">
+                    <div class="logo-circle">
+                        <span>AI</span>
+                    </div>
+                    <div class="loading-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+                <h3>Agentic AI</h3>
+                <p>Initializing your intelligent assistant...</p>
+            </div>
+        </div>
 
-{% block title %}Agentic AI - Chat Interface{% endblock %}
+        <!-- Main Chat Container -->
+        <div class="chat-container">
+            <!-- Header -->
+            <header class="chat-header">
+                <div class="header-left">
+                    <div class="logo-container">
+                        <div class="logo">
+                            <div class="logo-bg">
+                                <span>AI</span>
+                            </div>
+                            <div class="logo-text">
+                                <h1>Agentic AI</h1>
+                                <div class="tagline">Your intelligent assistant</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-{% block content %}
-<div class="chat-container">
-    <!-- Header -->
-    <header class="chat-header">
-        <div class="header-content">
-            <h1><i class="fas fa-robot"></i> Agentic AI Assistant</h1>
-            <div class="header-controls">
-                <button id="clear-btn" class="btn btn-secondary" title="Clear conversation">
-                    <i class="fas fa-trash"></i> Clear
-                </button>
-                <button id="toggle-debug" class="btn btn-secondary" title="Toggle debug info">
-                    <i class="fas fa-bug"></i> Debug
-                </button>
-                <div class="connection-status" id="connection-status">
-                    <i class="fas fa-circle status-indicator"></i>
-                    <span class="status-text">Connecting...</span>
+                <div class="header-right">
+                    <div class="connection-badge connecting" id="connection-badge">
+                        <div class="connection-dot"></div>
+                        <span class="connection-text">Connecting...</span>
+                    </div>
+
+                    <div class="header-actions">
+                        <button class="action-btn danger" id="clear-btn" title="Clear Conversation">
+                            <span>🗑️</span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Chat Area -->
+            <main class="chat-main">
+                <div class="messages-area" id="messages-area">
+                    <!-- Welcome Screen -->
+                    <div class="welcome-screen" id="welcome-screen">
+                        <div class="welcome-hero">
+                            <div class="hero-icon">
+                                <div class="hero-circle">
+                                    <span>AI</span>
+                                </div>
+                            </div>
+                            <h2>Welcome to Agentic AI</h2>
+                            <p class="hero-description">
+                                Your intelligent assistant powered by advanced AI capabilities
+                            </p>
+                        </div>
+
+                        <div class="capabilities">
+                            <div class="capability-card">
+                                <div class="capability-icon">
+                                    <span>🌐</span>
+                                </div>
+                                <h3>Web Search</h3>
+                                <p>Real-time information from across the web</p>
+                            </div>
+
+                            <div class="capability-card">
+                                <div class="capability-icon">
+                                    <span>📰</span>
+                                </div>
+                                <h3>Latest News</h3>
+                                <p>Current events and breaking news updates</p>
+                            </div>
+
+                            <div class="capability-card">
+                                <div class="capability-icon">
+                                    <span>📈</span>
+                                </div>
+                                <h3>Financial Data</h3>
+                                <p>Stock prices and market analysis</p>
+                            </div>
+
+                            <div class="capability-card">
+                                <div class="capability-icon">
+                                    <span>🧠</span>
+                                </div>
+                                <h3>Smart Memory</h3>
+                                <p>Contextual conversation history</p>
+                            </div>
+                        </div>
+
+                        <div class="quick-starters">
+                            <h3>Try asking me about:</h3>
+                            <div class="starter-buttons">
+                                <button class="starter-btn" data-query="What's the latest news about artificial intelligence?">
+                                    <span>📰</span>
+                                    Latest AI news
+                                </button>
+                                <button class="starter-btn" data-query="What's the current price of Apple stock?">
+                                    <span>💰</span>
+                                    Apple stock price
+                                </button>
+                                <button class="starter-btn" data-query="Tell me about the weather in New York">
+                                    <span>🌤️</span>
+                                    Weather information
+                                </button>
+                                <button class="starter-btn" data-query="Explain quantum computing in simple terms">
+                                    <span>🔬</span>
+                                    Tech explanations
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Messages Container -->
+                    <div class="messages-container" id="messages-container" style="display: none;">
+                        <!-- Messages will be dynamically added here -->
+                    </div>
+
+                    <!-- Typing Indicator -->
+                    <div class="typing-indicator" id="typing-indicator" style="display: none;">
+                        <div class="typing-avatar">
+                            <span>AI</span>
+                        </div>
+                        <div class="typing-content">
+                            <div class="typing-animation">
+                                <span></span>
+                                <span></span>
+                                <span></span>
+                            </div>
+                            <span class="typing-text">AI is thinking...</span>
+                        </div>
+                    </div>
+
+                    <!-- Status Indicator -->
+                    <div class="status-indicator" id="status-indicator" style="display: none;">
+                        <div class="typing-avatar">
+                            <span>AI</span>
+                        </div>
+                        <div class="status-content">
+                            <div class="status-icon">
+                                <span>⚡</span>
+                            </div>
+                            <span class="status-text" id="status-text">Processing...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input Area -->
+                <div class="chat-input-area">
+                    <div class="input-container">
+                        <div class="input-wrapper">
+                            <div class="input-field-container">
+                                <textarea 
+                                    id="message-input" 
+                                    class="message-input" 
+                                    placeholder="Ask me anything..." 
+                                    rows="1"
+                                    maxlength="4000"
+                                ></textarea>
+                            </div>
+                            <div class="send-button-container">
+                                <button id="send-btn" class="send-btn" title="Send" disabled>
+                                    <span class="send-icon">➤</span>
+                                    <span class="loading-icon" style="display: none;">⏳</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="input-footer">
+                            <div class="input-hints">
+                                <div class="hint">
+                                    <kbd>Enter</kbd>
+                                    <span>to send</span>
+                                </div>
+                                <div class="hint">
+                                    <kbd>Shift + Enter</kbd>
+                                    <span>for new line</span>
+                                </div>
+                            </div>
+                            <div class="char-counter">
+                                <span id="char-count">0</span>/4000
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Message Templates -->
+    <template id="user-message-template">
+        <div class="message user-message">
+            <div class="message-avatar">
+                <span>👤</span>
+            </div>
+            <div class="message-content">
+                <div class="message-bubble">
+                    <div class="message-text"></div>
+                </div>
+                <div class="message-footer">
+                    <div class="message-meta">
+                        <span class="message-time"></span>
+                    </div>
                 </div>
             </div>
         </div>
-    </header>
+    </template>
 
-    <!-- Main Chat Area -->
-    <main class="chat-main">
-        <!-- Messages Container -->
-        <div class="messages-container" id="messages-container">
-            <div class="welcome-message">
-                <div class="welcome-content">
-                    <i class="fas fa-robot welcome-icon"></i>
-                    <h2>Welcome to Agentic AI! 🤖</h2>
-                    <p>I'm your intelligent assistant with access to:</p>
-                    <ul class="features-list">
-                        <li><i class="fas fa-search"></i> Web Search</li>
-                        <li><i class="fas fa-newspaper"></i> Latest News</li>
-                        <li><i class="fas fa-chart-line"></i> Financial Data</li>
-                        <li><i class="fas fa-memory"></i> Conversation Memory</li>
-                    </ul>
-                    <p>Ask me anything!</p>
+    <template id="ai-message-template">
+        <div class="message ai-message">
+            <div class="message-avatar">
+                <span>🤖</span>
+            </div>
+            <div class="message-content">
+                <div class="message-bubble">
+                    <div class="message-text"></div>
+                </div>
+                <div class="message-footer">
+                    <div class="message-meta">
+                        <span class="message-time"></span>
+                        <div class="confidence-badge" style="display: none;">
+                            <span>✓</span>
+                            <span class="confidence-value"></span>
+                        </div>
+                        <div class="processing-time" style="display: none;">
+                            <span>⏱️</span>
+                            <span class="time-value"></span>
+                        </div>
+                        <div class="method-badge" style="display: none;">
+                            <span>🔧</span>
+                            <span class="method-value"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="message-sources" style="display: none;">
+                    <div class="sources-header">
+                        <span>🔗</span>
+                        <span>Sources</span>
+                    </div>
+                    <div class="sources-list"></div>
                 </div>
             </div>
         </div>
+    </template>
 
-        <!-- Typing Indicator -->
-        <div class="typing-indicator" id="typing-indicator" style="display: none;">
-            <div class="typing-dots">
-                <div class="dot"></div>
-                <div class="dot"></div>
-                <div class="dot"></div>
+    <template id="error-message-template">
+        <div class="message error-message">
+            <div class="message-avatar">
+                <span>❌</span>
             </div>
-            <span class="typing-text">AI is thinking...</span>
-        </div>
-
-        <!-- Status Updates -->
-        <div class="status-updates" id="status-updates" style="display: none;">
-            <div class="status-content">
-                <i class="fas fa-cog fa-spin"></i>
-                <span id="status-message">Processing...</span>
-            </div>
-        </div>
-    </main>
-
-    <!-- Input Area -->
-    <footer class="chat-footer">
-        <div class="input-container">
-            <div class="input-wrapper">
-                <textarea 
-                    id="message-input" 
-                    placeholder="Type your message here... (Press Enter to send, Shift+Enter for new line)"
-                    rows="1"
-                    maxlength="2000"
-                ></textarea>
-                <button id="send-btn" class="btn btn-primary" disabled>
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </div>
-            <div class="input-info">
-                <span class="char-count" id="char-count">0/2000</span>
-                <span class="input-hint">Press Enter to send</span>
+            <div class="message-content">
+                <div class="message-bubble">
+                    <div class="message-text"></div>
+                </div>
+                <div class="message-footer">
+                    <div class="message-meta">
+                        <span class="message-time"></span>
+                    </div>
+                </div>
             </div>
         </div>
-    </footer>
+    </template>
 
-    <!-- Debug Panel -->
-    <div class="debug-panel" id="debug-panel" style="display: none;">
-        <div class="debug-header">
-            <h3><i class="fas fa-bug"></i> Debug Information</h3>
-            <button id="close-debug" class="btn btn-ghost">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="debug-content" id="debug-content">
-            <p>Debug information will appear here...</p>
-        </div>
-    </div>
-</div>
+    <template id="source-link-template">
+        <a class="source-link" href="#" target="_blank" rel="noopener noreferrer">
+            <span>🔗</span>
+            <span class="source-title"></span>
+            <span class="source-domain"></span>
+        </a>
+    </template>
 
-<!-- Loading Overlay -->
-<div class="loading-overlay" id="loading-overlay" style="display: none;">
-    <div class="loading-content">
-        <div class="loading-spinner"></div>
-        <p>Initializing AI Assistant...</p>
-    </div>
-</div>
-
-<!-- Templates for Dynamic Content -->
-<template id="user-message-template">
-    <div class="message user-message">
-        <div class="message-content">
-            <div class="message-text"></div>
-            <div class="message-meta">
-                <span class="message-time"></span>
-            </div>
-        </div>
-        <div class="message-avatar user-avatar">
-            <i class="fas fa-user"></i>
-        </div>
-    </div>
-</template>
-
-<template id="ai-message-template">
-    <div class="message ai-message">
-        <div class="message-avatar ai-avatar">
-            <i class="fas fa-robot"></i>
-        </div>
-        <div class="message-content">
-            <div class="message-text"></div>
-            <div class="message-meta">
-                <span class="message-time"></span>
-                <span class="confidence-score"></span>
-                <span class="processing-time"></span>
-                <span class="method-used"></span>
-            </div>
-            <div class="message-sources" style="display: none;"></div>
-        </div>
-    </div>
-</template>
-
-<template id="error-message-template">
-    <div class="message error-message">
-        <div class="message-avatar error-avatar">
-            <i class="fas fa-exclamation-triangle"></i>
-        </div>
-        <div class="message-content">
-            <div class="message-text"></div>
-            <div class="message-meta">
-                <span class="message-time"></span>
-            </div>
-        </div>
-    </div>
-</template>
-{% endblock %}
+    <!-- Scripts - IMPORTANT: Updated Socket.IO version -->
+    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js" integrity="sha384-Gr6Lu2Ajx28mzwyVR8CFkULdCU7kMlZ9UthllibdOSo6qAiN+yXNHqtgdTvFXMT4" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 Initializing Agentic AI...');
+            window.app = new AgenticAI();
+        });
+    </script>
+</body>
+</html>
