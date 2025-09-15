@@ -2,12 +2,39 @@
 
 A powerful, intelligent AI assistant built with Flask and powered by Groq's LLaMA models. This agentic AI system can autonomously decide which tools to use, search the web, fetch financial data, and maintain conversation memory to provide comprehensive, contextual responses.
 
+Note: We are using GROQ API and GROQ decommissioned some older models and replace them with the new one. So make sure to make replace the names of the older model names to the newer models in the code.
+
 ![Python](https://img.shields.io/badge/python-v3.8+-blue.svg)
 ![Flask](https://img.shields.io/badge/flask-v2.3.3-green.svg)
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Status](https://img.shields.io/badge/status-active-success.svg)
 
 ## 🌟 Features
+
+### 🤖 **Multi-Agent Orchestration**
+- **Research Agent**: Handles fact-finding and news exploration
+- **Analysis Agent**: Performs financial analysis and structured insights
+- **Creative Agent**: Generates stories, articles, poems, and brainstorming ideas
+- **Agent Orchestrator**: Selects the most suitable agent automatically and synthesizes results
+
+### 🔍 **Enhanced Query Understanding**
+- **Classification System**: Detects if a query is casual, financial, social media, news, or general web
+- **Execution Plan**: Dynamically decides which tools to invoke
+- **Casual Talk Handling**: Responds naturally to greetings and small talk
+
+### 🛡️ **Improved Error Handling & Fallbacks**
+- **Automatic fallback**: If a specialized agent fails, falls back to direct tool execution
+- **Graceful responses**: Provides alternative suggestions when results are limited
+
+### 📚 **Memory & Contextual Awareness**
+- **Persistent Memory with ChromaDB**: Stores user queries and AI responses
+- **Semantic Retrieval**: Retrieves past context for continuity
+- **Conversation Manager**: Maintains per-user chat history
+
+### 📡 **Real-time Status Updates**
+- Sends live progress updates (e.g., analyzing, running tools, synthesizing) via WebSocket
+- Debug-friendly logs for monitoring each step
+
 
 ### 🧠 **Intelligent Agent System**
 - **Autonomous Tool Selection**: AI decides which tools to use based on user queries
