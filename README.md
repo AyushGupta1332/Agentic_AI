@@ -20,7 +20,6 @@ Note: We are using GROQ API and GROQ decommissioned some older models and replac
 - **Proactive Task Manager**: Detects patterns and offers automation suggestions, monitoring, and knowledge base creation.
 - **Enhanced Multi-Agent Pipeline**: Integrates Research, Analysis, and Creative agents with improved orchestration and synthesis.
 
-
 ### 🤖 **Multi-Agent Orchestration**
 - **Research Agent**: Handles fact-finding and news exploration
 - **Analysis Agent**: Performs financial analysis and structured insights
@@ -63,6 +62,12 @@ Note: We are using GROQ API and GROQ decommissioned some older models and replac
 - **Markdown Support**: Rich text formatting with code highlighting
 - **Debug Panel**: Developer tools for monitoring AI processes
 - **Status Updates**: Live progress tracking during AI processing
+
+## Features to Come !
+- **File Reading Capabilities**: Our AI can read docx, pdfs, txt, excel files and give you the perfect explaination or information you asked to it.
+- **Drag & Drop File Support**: Ask questions about PDFs, Excel, images.
+- **Interactive Visualizations**: Real-time stock charts and knowledge graphs.
+- **Multi-Language Support**: Auto translation for queries and results.
 
 ## 🚀 Quick Start
 
