@@ -11,6 +11,16 @@ Note: We are using GROQ API and GROQ decommissioned some older models and replac
 
 ## 🌟 Features
 
+### 🚀 **New Advanced Capabilities (Latest Update)**
+- **Real-Time Data Streams**: Continuous live updates for financial markets, news monitoring, and website change detection.
+- **Dynamic Tool Discovery**: Automatically analyzes queries and can create brand new tools on-the-fly to handle novel tasks.
+- **Advanced Analytics Engine**: Tracks user interactions, analyzes complexity trends, and provides personalized recommendations.
+- **Intelligent Cache System**: Predicts and caches likely next queries for faster responses.
+- **Adaptive Response Generator**: Personalizes responses based on sentiment, complexity, and conversation history.
+- **Proactive Task Manager**: Detects patterns and offers automation suggestions, monitoring, and knowledge base creation.
+- **Enhanced Multi-Agent Pipeline**: Integrates Research, Analysis, and Creative agents with improved orchestration and synthesis.
+
+
 ### 🤖 **Multi-Agent Orchestration**
 - **Research Agent**: Handles fact-finding and news exploration
 - **Analysis Agent**: Performs financial analysis and structured insights
