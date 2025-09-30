@@ -64,7 +64,7 @@ Note: We are using GROQ API and GROQ decommissioned some older models and replac
 - **Status Updates**: Live progress tracking during AI processing
 
 ## Features to Come !
-- **File Reading Capabilities**: Our AI can read docx, pdfs, txt, excel files and give you the perfect explaination or information you asked to it.
+- **File Reading Capabilities**: Our AI can read Docx, PDFs, Text, Excel Files and give you the perfect explaination or information you asked to it.
 - **Drag & Drop File Support**: Ask questions about PDFs, Excel, images.
 - **Interactive Visualizations**: Real-time stock charts and knowledge graphs.
 - **Multi-Language Support**: Auto translation for queries and results.
