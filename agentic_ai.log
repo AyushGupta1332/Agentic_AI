@@ -1,0 +1,127 @@
+2025-12-05 19:26:19,868 - chromadb.telemetry.product.posthog - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-12-05 19:26:25,744 - sentence_transformers.SentenceTransformer - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-12-05 19:26:32,581 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-12-05 19:26:32,582 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-05 19:26:32,670 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 19:26:32] "GET / HTTP/1.1" 200 -
+2025-12-05 19:26:33,020 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 19:26:33] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+2025-12-05 19:26:33,057 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 19:26:33] "GET /socket.io/?EIO=4&transport=polling&t=PhkpDQE HTTP/1.1" 200 -
+2025-12-05 19:26:33,387 - root - INFO - Client VyLH1FESF0_wQI6IAAAB connected.
+2025-12-05 19:26:33,387 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 19:26:33] "POST /socket.io/?EIO=4&transport=polling&t=PhkpDQu&sid=wUjJFN2fc_Xdv1USAAAA HTTP/1.1" 200 -
+2025-12-05 19:26:33,388 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 19:26:33] "GET /socket.io/?EIO=4&transport=polling&t=PhkpDQv&sid=wUjJFN2fc_Xdv1USAAAA HTTP/1.1" 200 -
+2025-12-05 19:27:28,453 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 19:27:28] "GET / HTTP/1.1" 200 -
+2025-12-05 19:27:28,459 - root - INFO - Client VyLH1FESF0_wQI6IAAAB disconnected.
+2025-12-05 19:27:28,459 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 19:27:28] "GET /socket.io/?EIO=4&transport=websocket&sid=wUjJFN2fc_Xdv1USAAAA HTTP/1.1" 200 -
+2025-12-05 19:27:28,757 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 19:27:28] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+2025-12-05 19:27:29,263 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 19:27:29] "GET /socket.io/?EIO=4&transport=polling&t=PhkpR3y HTTP/1.1" 200 -
+2025-12-05 19:27:29,512 - root - INFO - Client T8MRGf2Qyu7UwZF4AAAD connected.
+2025-12-05 19:27:29,512 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 19:27:29] "POST /socket.io/?EIO=4&transport=polling&t=PhkpR8n&sid=9j76l6P-9B3TNbX2AAAC HTTP/1.1" 200 -
+2025-12-05 19:27:29,603 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 19:27:29] "GET /socket.io/?EIO=4&transport=polling&t=PhkpR8o&sid=9j76l6P-9B3TNbX2AAAC HTTP/1.1" 200 -
+2025-12-05 19:27:29,651 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 19:27:29] "GET /socket.io/?EIO=4&transport=polling&t=PhkpRE7&sid=9j76l6P-9B3TNbX2AAAC HTTP/1.1" 200 -
+2025-12-05 19:29:37,025 - chromadb.telemetry.product.posthog - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-12-05 19:29:43,081 - sentence_transformers.SentenceTransformer - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-12-05 19:29:48,355 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-12-05 19:29:48,355 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-05 19:29:50,848 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 19:29:50] "GET / HTTP/1.1" 200 -
+2025-12-05 19:29:51,088 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 19:29:51] "GET /static/js/app.js HTTP/1.1" 200 -
+2025-12-05 19:29:51,198 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 19:29:51] "GET /socket.io/?EIO=4&transport=polling&t=Phkpzo5 HTTP/1.1" 200 -
+2025-12-05 19:29:51,535 - root - INFO - Client E0ThNCi3fzO_ml28AAAB connected.
+2025-12-05 19:29:51,536 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 19:29:51] "POST /socket.io/?EIO=4&transport=polling&t=Phkpzox&sid=VdzUoOmqfN3BIBypAAAA HTTP/1.1" 200 -
+2025-12-05 19:29:51,539 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 19:29:51] "GET /socket.io/?EIO=4&transport=polling&t=Phkpzoy&sid=VdzUoOmqfN3BIBypAAAA HTTP/1.1" 200 -
+2025-12-05 19:29:58,389 - root - INFO - Received message from E0ThNCi3fzO_ml28AAAB: Hi
+2025-12-05 19:29:58,444 - root - INFO - ✅ Created real-time stream: default_financial
+2025-12-05 19:29:58,444 - root - INFO - ✅ Created real-time stream: tech_news
+2025-12-05 19:29:58,454 - root - INFO - ✅ Default data streams initialized
+2025-12-05 19:29:58,631 - root - INFO - Executing enhanced news search for query: AI
+2025-12-05 19:29:59,185 - primp - INFO - response: https://duckduckgo.com/?q=AI 202
+2025-12-05 19:30:00,053 - primp - INFO - response: https://duckduckgo.com/?q=AI+news 202
+2025-12-05 19:30:00,054 - root - INFO - Executing enhanced news search for query: technology
+2025-12-05 19:30:00,628 - primp - INFO - response: https://duckduckgo.com/?q=technology 200
+2025-12-05 19:30:01,856 - primp - INFO - response: https://duckduckgo.com/news.js?l=us-en&o=json&noamp=1&q=technology&vqd=4-104525511226665161581147889529860155741&p=-1 200
+2025-12-05 19:30:01,916 - root - INFO - Executing enhanced news search for query: innovation
+2025-12-05 19:30:02,299 - primp - INFO - response: https://duckduckgo.com/?q=innovation 200
+2025-12-05 19:30:03,605 - primp - INFO - response: https://duckduckgo.com/news.js?l=us-en&o=json&noamp=1&q=innovation&vqd=4-39932320613523325396654230697738777591&p=-1 200
+2025-12-05 19:30:03,606 - root - INFO - Executing enhanced news search for query: startup
+2025-12-05 19:30:03,912 - primp - INFO - response: https://duckduckgo.com/?q=startup 200
+2025-12-05 19:30:05,185 - primp - INFO - response: https://duckduckgo.com/news.js?l=us-en&o=json&noamp=1&q=startup&vqd=4-22328935817444240656952450971330075097&p=-1 200
+2025-12-05 19:30:05,643 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-05 19:30:05,658 - root - INFO - Generating an enhanced plan for the query...
+2025-12-05 19:30:05,815 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-05 19:30:05,817 - root - INFO - Synthesizing final response...
+2025-12-05 19:30:05,991 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-05 19:30:05,993 - root - INFO - Adding interaction to memory.
+2025-12-05 19:30:21,128 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 19:30:21] "GET / HTTP/1.1" 200 -
+2025-12-05 19:30:21,134 - root - INFO - Client E0ThNCi3fzO_ml28AAAB disconnected.
+2025-12-05 19:30:21,135 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 19:30:21] "GET /socket.io/?EIO=4&transport=websocket&sid=VdzUoOmqfN3BIBypAAAA HTTP/1.1" 200 -
+2025-12-05 19:30:21,429 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 19:30:21] "[36mGET /static/js/app.js HTTP/1.1[0m" 304 -
+2025-12-05 19:30:21,752 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 19:30:21] "GET /socket.io/?EIO=4&transport=polling&t=Phkq5B5 HTTP/1.1" 200 -
+2025-12-05 19:30:22,013 - root - INFO - Client e7AX2nnInIrL_hq-AAAD connected.
+2025-12-05 19:30:22,013 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 19:30:22] "POST /socket.io/?EIO=4&transport=polling&t=Phkq5Fw&sid=EDTxPJxpSw_9krLwAAAC HTTP/1.1" 200 -
+2025-12-05 19:30:22,069 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 19:30:22] "GET /socket.io/?EIO=4&transport=polling&t=Phkq5Fx&sid=EDTxPJxpSw_9krLwAAAC HTTP/1.1" 200 -
+2025-12-05 19:30:22,109 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 19:30:22] "GET /socket.io/?EIO=4&transport=polling&t=Phkq5Ku&sid=EDTxPJxpSw_9krLwAAAC HTTP/1.1" 200 -
+2025-12-05 19:30:23,791 - root - INFO - Received message from e7AX2nnInIrL_hq-AAAD: Search for information about AI
+2025-12-05 19:30:23,796 - groq._base_client - INFO - Retrying request to /openai/v1/chat/completions in 0.390449 seconds
+2025-12-05 19:30:24,874 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-05 19:30:25,950 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-05 19:30:25,952 - root - INFO - ✅ Created dynamic tool: ai_info_search
+2025-12-05 19:30:25,953 - root - INFO - Generating an enhanced plan for the query...
+2025-12-05 19:30:26,104 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-05 19:30:26,106 - root - INFO - Executing enhanced web search for query: Search for information about AI
+2025-12-05 19:30:26,841 - primp - INFO - response: https://www.bing.com/search?q=Search+for+information+about+AI 200
+2025-12-05 19:30:27,439 - primp - INFO - response: https://www.bing.com/search?q=Search+for+information+about+AI+2025 200
+2025-12-05 19:30:27,991 - primp - INFO - response: https://www.bing.com/search?q=Search+for+information+about+AI+latest+information 200
+2025-12-05 19:30:28,105 - root - INFO - Synthesizing final response...
+2025-12-05 19:30:28,960 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-05 19:30:29,459 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-05 19:30:29,461 - root - INFO - Adding interaction to memory.
+2025-12-05 19:30:47,825 - root - INFO - Client e7AX2nnInIrL_hq-AAAD requested to clear history.
+2025-12-05 19:32:17,492 - chromadb.telemetry.product.posthog - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2025-12-05 19:32:21,692 - sentence_transformers.SentenceTransformer - INFO - Load pretrained SentenceTransformer: all-MiniLM-L6-v2
+2025-12-05 19:32:26,550 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-12-05 19:32:26,551 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-12-05 19:32:31,249 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 19:32:31] "GET / HTTP/1.1" 200 -
+2025-12-05 19:32:31,533 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 19:32:31] "GET /static/js/app.js HTTP/1.1" 200 -
+2025-12-05 19:32:32,396 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 19:32:32] "GET /socket.io/?EIO=4&transport=polling&t=Phkqb95 HTTP/1.1" 200 -
+2025-12-05 19:32:32,416 - root - INFO - Client F8UfdRnSsnCv9uQbAAAB connected.
+2025-12-05 19:32:32,416 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 19:32:32] "POST /socket.io/?EIO=4&transport=polling&t=Phkqb9S&sid=MRrg6w_-Izf2ZD4SAAAA HTTP/1.1" 200 -
+2025-12-05 19:32:32,439 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 19:32:32] "GET /socket.io/?EIO=4&transport=polling&t=Phkqb9T&sid=MRrg6w_-Izf2ZD4SAAAA HTTP/1.1" 200 -
+2025-12-05 19:32:32,472 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 19:32:32] "GET /socket.io/?EIO=4&transport=polling&t=Phkqb9-&sid=MRrg6w_-Izf2ZD4SAAAA HTTP/1.1" 200 -
+2025-12-05 19:32:32,476 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 19:32:32] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-12-05 19:32:37,610 - root - INFO - Received message from F8UfdRnSsnCv9uQbAAAB: Tell me about recent market trends
+2025-12-05 19:32:37,699 - root - INFO - ✅ Created real-time stream: default_financial
+2025-12-05 19:32:37,700 - root - INFO - ✅ Created real-time stream: tech_news
+2025-12-05 19:32:37,700 - root - INFO - ✅ Default data streams initialized
+2025-12-05 19:32:37,810 - root - INFO - Executing enhanced news search for query: AI
+2025-12-05 19:32:38,163 - primp - INFO - response: https://duckduckgo.com/?q=AI 200
+2025-12-05 19:32:39,474 - primp - INFO - response: https://duckduckgo.com/news.js?l=us-en&o=json&noamp=1&q=AI&vqd=4-264591456120080700413630643586829635872&p=-1 200
+2025-12-05 19:32:39,475 - root - INFO - Executing enhanced news search for query: technology
+2025-12-05 19:32:39,801 - primp - INFO - response: https://duckduckgo.com/?q=technology 202
+2025-12-05 19:32:40,751 - primp - INFO - response: https://duckduckgo.com/?q=technology+news 202
+2025-12-05 19:32:40,751 - root - INFO - Executing enhanced news search for query: innovation
+2025-12-05 19:32:41,242 - primp - INFO - response: https://duckduckgo.com/?q=innovation 200
+2025-12-05 19:32:42,403 - primp - INFO - response: https://duckduckgo.com/news.js?l=us-en&o=json&noamp=1&q=innovation&vqd=4-39931954262499926436931693586093703623&p=-1 200
+2025-12-05 19:32:42,452 - root - INFO - Executing enhanced news search for query: startup
+2025-12-05 19:32:42,761 - primp - INFO - response: https://duckduckgo.com/?q=startup 200
+2025-12-05 19:32:43,922 - primp - INFO - response: https://duckduckgo.com/news.js?l=us-en&o=json&noamp=1&q=startup&vqd=4-22328655666661827222022598805291723753&p=-1 200
+2025-12-05 19:32:44,667 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-05 19:32:45,427 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-05 19:32:45,429 - root - INFO - ✅ Created dynamic tool: market_trend_analysis
+2025-12-05 19:32:45,430 - root - INFO - 🔬 ResearchAgent processing: Tell me about recent market trends
+2025-12-05 19:32:45,430 - root - INFO - Executing enhanced news search for query: Tell me about recent market trends
+2025-12-05 19:32:45,810 - primp - INFO - response: https://duckduckgo.com/?q=Tell+me+about+recent+market+trends 200
+2025-12-05 19:32:46,961 - primp - INFO - response: https://duckduckgo.com/news.js?l=us-en&o=json&noamp=1&q=Tell+me+about+recent+market+trends&vqd=4-318558658625644691236069629530918542658&p=-1 200
+2025-12-05 19:32:48,208 - primp - INFO - response: https://duckduckgo.com/news.js?l=us-en&o=json&noamp=1&q=Tell+me+about+recent+market+trends&vqd=4-318558658625644691236069629530918542658&p=-1&s=30 200
+2025-12-05 19:32:49,096 - primp - INFO - response: https://duckduckgo.com/?q=Tell+me+about+recent+market+trends+news 200
+2025-12-05 19:32:50,590 - primp - INFO - response: https://duckduckgo.com/news.js?l=us-en&o=json&noamp=1&q=Tell+me+about+recent+market+trends+news&vqd=4-225852226421620553423657941273424868053&p=-1 200
+2025-12-05 19:32:52,168 - primp - INFO - response: https://duckduckgo.com/news.js?l=us-en&o=json&noamp=1&q=Tell+me+about+recent+market+trends+news&vqd=4-225852226421620553423657941273424868053&p=-1&s=30 200
+2025-12-05 19:32:52,169 - root - INFO - Executing enhanced web search for query: Tell me about recent market trends
+2025-12-05 19:32:53,039 - primp - INFO - response: https://www.bing.com/search?q=Tell+me+about+recent+market+trends 200
+2025-12-05 19:32:53,662 - primp - INFO - response: https://www.bing.com/search?q=Tell+me+about+recent+market+trends+2025 200
+2025-12-05 19:32:54,324 - primp - INFO - response: https://www.bing.com/search?q=Tell+me+about+recent+market+trends+latest+information 200
+2025-12-05 19:32:55,879 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-05 19:32:57,330 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2025-12-05 19:32:57,332 - root - INFO - Adding interaction to memory.
+2025-12-05 19:33:05,551 - root - INFO - Client F8UfdRnSsnCv9uQbAAAB disconnected.
+2025-12-05 19:33:05,551 - werkzeug - INFO - 127.0.0.1 - - [05/Dec/2025 19:33:05] "GET /socket.io/?EIO=4&transport=websocket&sid=MRrg6w_-Izf2ZD4SAAAA HTTP/1.1" 200 -

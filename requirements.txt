@@ -1,0 +1,15 @@
+flask
+flask-socketio
+python-socketio
+simple-websocket
+pydantic
+httpx
+duckduckgo-search
+yfinance
+groq
+chromadb
+sentence-transformers
+python-dotenv
+flask-cors
+pytest
+pytest-asyncio

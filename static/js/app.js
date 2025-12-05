@@ -1,742 +1,360 @@
-// ===== MODERN AGENTIC AI APPLICATION =====
+// ===== MODERN AGENTIC AI APPLICATION WITH TAILWIND CSS =====
 class AgenticAI {
     constructor() {
-        // Core properties
         this.socket = null;
         this.isConnected = false;
-        this.clientId = null;
-
-        // UI state
-        this.isTyping = false;
         this.messageHistory = [];
         this.isInitialized = false;
-        this.initializationErrors = [];
+        
+        this.quickStarters = [
+            "What's the latest news in tech?",
+            "Search for information about AI",
+            "Get me financial data for AAPL",
+            "Tell me about recent market trends",
+            "What are the top trending topics?",
+            "Analyze the current weather forecast"
+        ];
 
-        // Performance tracking
-        this.performance = {
-            connectionStart: null,
-            lastMessageTime: null,
-            totalMessages: 0
-        };
-
-        // DOM elements cache
         this.elements = this.initializeElements();
-
-        // Initialize app
         this.init();
     }
 
     initializeElements() {
         return {
-            // Core UI
             app: document.getElementById('app'),
             loadingScreen: document.getElementById('loading-screen'),
-
-            // Header
             connectionBadge: document.getElementById('connection-badge'),
             connectionText: document.querySelector('.connection-text'),
-            connectionDot: document.querySelector('.connection-dot'),
-
-            // Action buttons
             clearBtn: document.getElementById('clear-btn'),
-
-            // Main chat
             messagesArea: document.getElementById('messages-area'),
             welcomeScreen: document.getElementById('welcome-screen'),
             messagesContainer: document.getElementById('messages-container'),
-
-            // Input area
+            quickStarters: document.getElementById('quick-starters'),
             messageInput: document.getElementById('message-input'),
+            messageForm: document.getElementById('message-form'),
             sendBtn: document.getElementById('send-btn'),
-            sendIcon: document.querySelector('.send-icon'),
-            loadingIcon: document.querySelector('.loading-icon'),
             charCount: document.getElementById('char-count'),
-
-            // Indicators
-            typingIndicator: document.getElementById('typing-indicator'),
-            statusIndicator: document.getElementById('status-indicator'),
-            statusText: document.getElementById('status-text'),
-
-            // Templates
             userMessageTemplate: document.getElementById('user-message-template'),
             aiMessageTemplate: document.getElementById('ai-message-template'),
             errorMessageTemplate: document.getElementById('error-message-template'),
             sourceLinkTemplate: document.getElementById('source-link-template'),
-
-            // Toast container
             toastContainer: document.getElementById('toast-container')
         };
     }
 
-    // ===== INITIALIZATION =====
     init() {
         console.log('🚀 Initializing Agentic AI...');
-        try {
-            this.setupEventListeners();
-            this.setupQuickStarters();
+        this.setupEventListeners();
+        this.setupQuickStarters();
+        this.connectSocket();
 
-            // Connect socket with timeout fallback
-            this.connectSocket();
-
-            // Fallback to hide loading screen after 3 seconds regardless
-            setTimeout(() => {
-                if (!this.isInitialized) {
-                    console.warn('⚠️ Initialization timeout, forcing completion');
-                    this.completeInitialization();
-                }
-            }, 3000);
-
-            console.log('✅ Agentic AI basic initialization completed');
-        } catch (error) {
-            console.error('❌ Initialization error:', error);
-            this.initializationErrors.push(error);
-            this.completeInitialization();
-        }
+        setTimeout(() => {
+            if (!this.isInitialized) {
+                this.completeInitialization();
+            }
+        }, 3000);
     }
 
     completeInitialization() {
         if (this.isInitialized) return;
-
         this.isInitialized = true;
         this.hideLoadingScreen();
-
-        // Focus input after a delay
-        setTimeout(() => {
-            try {
-                if (this.elements.messageInput) {
-                    this.elements.messageInput.focus();
-                }
-            } catch (error) {
-                console.debug('Focus error (ignored):', error);
-            }
-        }, 300);
-
-        if (this.initializationErrors.length > 0) {
-            console.warn('Initialization completed with warnings:', this.initializationErrors);
-        } else {
-            console.log('✅ Initialization completed successfully');
-        }
     }
 
-    setupEventListeners() {
-        try {
-            // Message input
-            if (this.elements.messageInput) {
-                this.elements.messageInput.addEventListener('input', () => this.handleInputChange());
-                this.elements.messageInput.addEventListener('keydown', (e) => this.handleInputKeydown(e));
-                this.elements.messageInput.addEventListener('paste', () => {
-                    setTimeout(() => this.handleInputChange(), 0);
-                });
-            }
-
-            // Send button
-            if (this.elements.sendBtn) {
-                this.elements.sendBtn.addEventListener('click', () => this.sendMessage());
-            }
-
-            // Clear button
-            if (this.elements.clearBtn) {
-                this.elements.clearBtn.addEventListener('click', () => this.clearConversation());
-            }
-
-            // Window events
-            window.addEventListener('beforeunload', () => this.handleBeforeUnload());
-            window.addEventListener('focus', () => this.handleWindowFocus());
-            document.addEventListener('visibilitychange', () => this.handleVisibilityChange());
-
-            // Global keyboard shortcuts
-            document.addEventListener('keydown', (e) => this.handleGlobalKeydown(e));
-        } catch (error) {
-            console.warn('Event listeners setup error:', error);
-            this.initializationErrors.push(error);
-        }
-    }
-
-    setupQuickStarters() {
-        try {
-            const starterBtns = document.querySelectorAll('.starter-btn');
-            starterBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const query = btn.dataset.query;
-                    if (query && this.elements.messageInput) {
-                        this.elements.messageInput.value = query;
-                        this.handleInputChange();
-                        this.elements.messageInput.focus();
-                    }
-                });
-            });
-        } catch (error) {
-            console.warn('Quick starters setup error:', error);
-            this.initializationErrors.push(error);
-        }
-    }
-
-    // ===== SOCKET CONNECTION =====
-    connectSocket() {
-        if (typeof io === 'undefined') {
-            console.warn('❌ Socket.IO not loaded - running in offline mode');
-            this.updateConnectionStatus('disconnected');
-            this.completeInitialization();
-            return;
-        }
-
-        this.performance.connectionStart = performance.now();
-        this.updateConnectionStatus('connecting');
-
-        try {
-            this.socket = io({
-                transports: ['websocket', 'polling'],
-                timeout: 10000,
-                reconnection: true,
-                reconnectionAttempts: 3,
-                reconnectionDelay: 1000,
-                reconnectionDelayMax: 3000
-            });
-
-            this.setupSocketEvents();
-        } catch (error) {
-            console.error('Socket connection failed:', error);
-            this.updateConnectionStatus('disconnected');
-            this.completeInitialization();
-        }
-    }
-
-    setupSocketEvents() {
-        // Connection success
-        this.socket.on('connect', () => {
-            const connectionTime = performance.now() - this.performance.connectionStart;
-            console.log(`⚡ Connected in ${connectionTime.toFixed(2)}ms`);
-            this.isConnected = true;
-            this.updateConnectionStatus('connected');
-        });
-
-        // Disconnection
-        this.socket.on('disconnect', (reason) => {
-            console.log('🔌 Disconnected:', reason);
-            this.isConnected = false;
-            this.updateConnectionStatus('disconnected');
-            this.hideTypingIndicator();
-            this.hideStatusIndicator();
-        });
-
-        // Server connection confirmed
-        this.socket.on('connected', (data) => {
-            console.log('✅ Server connection established:', data);
-            this.clientId = data.client_id;
-            
-            if (!this.messageHistory.length) {
-                this.showToast('Connected to Agentic AI', 'success', 3000);
-            }
-            
-            this.completeInitialization();
-        });
-
-        // Message events
-        this.socket.on('status_update', (data) => {
-            this.showStatusIndicator(data.message);
-        });
-
-        this.socket.on('final_response', (data) => {
-            this.handleFinalResponse(data);
-        });
-
-        this.socket.on('error', (data) => {
-            this.handleSocketError(data);
-        });
-
-        this.socket.on('history_cleared', (data) => {
-            this.clearMessages();
-            this.showWelcomeScreen();
-            this.showToast(data.message || 'Conversation cleared', 'success', 2000);
-        });
-
-        // Connection error handling
-        this.socket.on('connect_error', (error) => {
-            console.warn('Connection error:', error);
-            this.updateConnectionStatus('disconnected');
-            setTimeout(() => this.completeInitialization(), 1000);
-        });
-
-        this.socket.on('reconnect', (attemptNumber) => {
-            console.log(`🔄 Reconnected after ${attemptNumber} attempts`);
-            this.showToast('Reconnected successfully!', 'success', 2000);
-        });
-
-        this.socket.on('reconnect_failed', () => {
-            console.warn('❌ Failed to reconnect');
-            this.showToast('Connection lost. Working in offline mode.', 'warning', 3000);
-        });
-    }
-
-    // ===== UI UPDATES =====
     hideLoadingScreen() {
         if (this.elements.loadingScreen) {
             this.elements.loadingScreen.style.opacity = '0';
-            this.elements.loadingScreen.style.pointerEvents = 'none';
             setTimeout(() => {
                 this.elements.loadingScreen.style.display = 'none';
             }, 300);
         }
     }
 
-    updateConnectionStatus(status) {
-        if (!this.elements.connectionBadge) return;
+    setupEventListeners() {
+        if (this.elements.messageForm) {
+            this.elements.messageForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.sendMessage();
+            });
+        }
 
-        // Remove all status classes
-        this.elements.connectionBadge.className = 'connection-badge';
-        // Add new status class
-        this.elements.connectionBadge.classList.add(status);
+        if (this.elements.messageInput) {
+            this.elements.messageInput.addEventListener('input', (e) => {
+                const length = e.target.value.length;
+                if (this.elements.charCount) {
+                    this.elements.charCount.textContent = `${length}/2000`;
+                }
+            });
+        }
 
-        // Update text
-        const statusText = {
-            connecting: 'Connecting...',
-            connected: 'Connected',
-            disconnected: 'Offline'
-        };
-
-        if (this.elements.connectionText) {
-            this.elements.connectionText.textContent = statusText[status] || 'Unknown';
+        if (this.elements.clearBtn) {
+            this.elements.clearBtn.addEventListener('click', () => {
+                this.clearConversation();
+            });
         }
     }
 
-    // ===== MESSAGE HANDLING =====
-    sendMessage() {
-        const message = this.elements.messageInput?.value.trim();
+    setupQuickStarters() {
+        if (!this.elements.quickStarters) return;
+
+        this.quickStarters.forEach(question => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = `w-full text-left p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-indigo-500 dark:hover:border-indigo-400 hover:shadow-md transition-all duration-200 text-sm text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 group`;
+            
+            button.innerHTML = `
+                <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4 text-gray-400 group-hover:text-indigo-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                    <span class="line-clamp-2">${this.escapeHtml(question)}</span>
+                </div>
+            `;
+            
+            button.addEventListener('click', () => {
+                this.elements.messageInput.value = question;
+                this.sendMessage();
+            });
+            
+            this.elements.quickStarters.appendChild(button);
+        });
+    }
+
+    async sendMessage() {
+        const message = this.elements.messageInput.value.trim();
+        
         if (!message) {
+            this.showToast('Please enter a message', 'warning');
             return;
         }
 
         if (!this.isConnected) {
-            this.showToast('Not connected to server. Please check your connection.', 'warning', 3000);
+            this.showToast('Not connected to server. Please try again.', 'error');
             return;
         }
 
-        // Track performance
-        this.performance.lastMessageTime = performance.now();
-        this.performance.totalMessages++;
-
-        // Hide welcome screen
-        this.hideWelcomeScreen();
-
-        // Add user message
-        this.addUserMessage(message);
-
-        // Clear input and update UI
-        this.elements.messageInput.value = '';
-        this.handleInputChange();
-        this.showTypingIndicator();
-        this.setInputEnabled(false);
-
-        // Send to server
-        try {
-            this.socket.emit('send_message', { message });
-            
-            // Store in history
-            this.messageHistory.push({
-                type: 'user',
-                message,
-                timestamp: Date.now()
-            });
-        } catch (error) {
-            console.error('Error sending message:', error);
-            this.handleSocketError({ message: 'Failed to send message. Please try again.' });
-        }
-
-        // Auto-resize input
-        this.elements.messageInput.style.height = 'auto';
-    }
-
-    handleInputChange() {
-        if (!this.elements.messageInput) return;
-
-        const value = this.elements.messageInput.value;
-        const length = value.length;
-        const maxLength = 4000;
-
-        // Update character count
-        if (this.elements.charCount) {
-            this.elements.charCount.textContent = length;
-
-            // Add warning class if approaching limit
-            if (length > maxLength * 0.8) {
-                this.elements.charCount.style.color = 'var(--color-warning-500)';
-            } else {
-                this.elements.charCount.style.color = 'var(--text-muted)';
-            }
-        }
-
-        // Update send button
-        this.updateSendButton();
-
-        // Auto-resize textarea
-        try {
-            this.elements.messageInput.style.height = 'auto';
-            this.elements.messageInput.style.height = Math.min(this.elements.messageInput.scrollHeight, 128) + 'px';
-        } catch (error) {
-            // Ignore resize errors
-        }
-    }
-
-    handleInputKeydown(event) {
-        if (event.key === 'Enter' && !event.shiftKey) {
-            event.preventDefault();
-            this.sendMessage();
-        } else if (event.key === 'Escape') {
-            try {
-                this.elements.messageInput.blur();
-            } catch (error) {
-                // Ignore blur errors
-            }
-        }
-    }
-
-    updateSendButton() {
-        if (!this.elements.sendBtn || !this.elements.messageInput) return;
-
-        const hasMessage = this.elements.messageInput.value.trim().length > 0;
-        const canSend = hasMessage && this.isConnected && !this.isTyping;
-
-        this.elements.sendBtn.disabled = !canSend;
-
-        if (canSend) {
-            this.elements.sendBtn.classList.add('ready');
-        } else {
-            this.elements.sendBtn.classList.remove('ready');
-        }
-    }
-
-    setInputEnabled(enabled) {
-        if (this.elements.messageInput) {
-            this.elements.messageInput.disabled = !enabled;
-        }
-        
-        this.updateSendButton();
-        
-        if (enabled) {
-            try {
-                this.elements.messageInput?.focus();
-            } catch (error) {
-                // Ignore focus errors
-            }
-        }
-    }
-
-    // ===== MESSAGE DISPLAY =====
-    addUserMessage(message) {
-        if (!this.elements.userMessageTemplate || !this.elements.messagesContainer) return;
-
-        const messageElement = this.elements.userMessageTemplate.content.cloneNode(true);
-        const textElement = messageElement.querySelector('.message-text');
-        const timeElement = messageElement.querySelector('.message-time');
-
-        if (textElement) textElement.textContent = message;
-        if (timeElement) timeElement.textContent = new Date().toLocaleTimeString();
-
-        this.elements.messagesContainer.appendChild(messageElement);
-        this.scrollToBottom();
-    }
-
-    handleFinalResponse(data) {
-        this.hideTypingIndicator();
-        this.hideStatusIndicator();
-        this.setInputEnabled(true);
-        this.isTyping = false;
-
-        if (!this.elements.aiMessageTemplate || !this.elements.messagesContainer) return;
-
-        const messageElement = this.elements.aiMessageTemplate.content.cloneNode(true);
-        const textElement = messageElement.querySelector('.message-text');
-        const timeElement = messageElement.querySelector('.message-time');
-        const confidenceElement = messageElement.querySelector('.confidence-badge');
-        const processingElement = messageElement.querySelector('.processing-time');
-        const methodElement = messageElement.querySelector('.method-badge');
-        const sourcesContainer = messageElement.querySelector('.message-sources');
-
-        // Set response text
-        if (textElement && data.response) {
-            textElement.innerHTML = this.formatMarkdown(data.response);
-        }
-
-        // Set timestamp
-        if (timeElement) {
-            timeElement.textContent = new Date().toLocaleTimeString();
-        }
-
-        // Set confidence
-        if (confidenceElement && data.confidence) {
-            confidenceElement.style.display = 'inline-flex';
-            const confidenceValue = confidenceElement.querySelector('.confidence-value');
-            if (confidenceValue) confidenceValue.textContent = `${data.confidence}%`;
-        }
-
-        // Set processing time
-        if (processingElement && data.processing_time) {
-            processingElement.style.display = 'inline-flex';
-            const timeValue = processingElement.querySelector('.time-value');
-            if (timeValue) timeValue.textContent = `${data.processing_time}s`;
-        }
-
-        // Set method
-        if (methodElement && data.method) {
-            methodElement.style.display = 'inline-flex';
-            const methodValue = methodElement.querySelector('.method-value');
-            if (methodValue) methodValue.textContent = data.method;
-        }
-
-        // Add sources
-        if (sourcesContainer && data.sources && data.sources.length > 0) {
-            sourcesContainer.style.display = 'block';
-            const sourcesList = sourcesContainer.querySelector('.sources-list');
-            if (sourcesList) {
-                sourcesList.innerHTML = '';
-                data.sources.forEach(source => {
-                    const sourceElement = this.createSourceLink(source);
-                    if (sourceElement) sourcesList.appendChild(sourceElement);
-                });
-            }
-        }
-
-        this.elements.messagesContainer.appendChild(messageElement);
-        this.scrollToBottom();
-    }
-
-    createSourceLink(source) {
-        if (!this.elements.sourceLinkTemplate) return null;
-
-        const linkElement = this.elements.sourceLinkTemplate.content.cloneNode(true);
-        const link = linkElement.querySelector('.source-link');
-        const title = linkElement.querySelector('.source-title');
-        const domain = linkElement.querySelector('.source-domain');
-
-        if (link && source.url) {
-            link.href = source.url;
-        }
-
-        if (title && source.name) {
-            title.textContent = source.name;
-        }
-
-        if (domain && source.url) {
-            try {
-                const url = new URL(source.url);
-                domain.textContent = url.hostname;
-            } catch (error) {
-                domain.textContent = '';
-            }
-        }
-
-        return linkElement;
-    }
-
-    // ===== INDICATORS =====
-    showTypingIndicator() {
-        this.isTyping = true;
-        this.updateSendButton();
-        if (this.elements.typingIndicator) {
-            this.elements.typingIndicator.style.display = 'flex';
-        }
-        this.scrollToBottom();
-    }
-
-    hideTypingIndicator() {
-        this.isTyping = false;
-        this.updateSendButton();
-        if (this.elements.typingIndicator) {
-            this.elements.typingIndicator.style.display = 'none';
-        }
-    }
-
-    showStatusIndicator(message) {
-        if (this.elements.statusIndicator) {
-            this.elements.statusIndicator.style.display = 'flex';
-        }
-        if (this.elements.statusText) {
-            this.elements.statusText.textContent = message;
-        }
-        this.scrollToBottom();
-    }
-
-    hideStatusIndicator() {
-        if (this.elements.statusIndicator) {
-            this.elements.statusIndicator.style.display = 'none';
-        }
-    }
-
-    // ===== SCREEN MANAGEMENT =====
-    hideWelcomeScreen() {
         if (this.elements.welcomeScreen) {
             this.elements.welcomeScreen.style.display = 'none';
         }
-        if (this.elements.messagesContainer) {
-            this.elements.messagesContainer.style.display = 'block';
-        }
-    }
 
-    showWelcomeScreen() {
-        if (this.elements.welcomeScreen) {
-            this.elements.welcomeScreen.style.display = 'flex';
-        }
-        if (this.elements.messagesContainer) {
-            this.elements.messagesContainer.style.display = 'none';
-        }
-    }
+        this.addUserMessage(message);
+        this.elements.messageInput.value = '';
+        this.elements.charCount.textContent = '0/2000';
 
-    // ===== ACTIONS =====
-    clearConversation() {
-        if (this.socket && this.isConnected) {
-            this.socket.emit('clear_history');
-        } else {
-            this.clearMessages();
-            this.showWelcomeScreen();
-            this.showToast('Conversation cleared locally', 'success', 2000);
-        }
-    }
-
-    clearMessages() {
-        if (this.elements.messagesContainer) {
-            this.elements.messagesContainer.innerHTML = '';
-        }
-        this.messageHistory = [];
-    }
-
-    // ===== ERROR HANDLING =====
-    handleSocketError(data) {
-        this.hideTypingIndicator();
-        this.hideStatusIndicator();
-        this.setInputEnabled(true);
-        this.showToast(data?.message || 'An error occurred', 'error', 3000);
-
-        // Add error message to chat
-        if (this.elements.errorMessageTemplate && this.elements.messagesContainer) {
-            const messageElement = this.elements.errorMessageTemplate.content.cloneNode(true);
-            const textElement = messageElement.querySelector('.message-text');
-            const timeElement = messageElement.querySelector('.message-time');
-
-            if (textElement) {
-                textElement.textContent = data?.message || 'An error occurred while processing your request.';
-            }
-            if (timeElement) {
-                timeElement.textContent = new Date().toLocaleTimeString();
-            }
-
-            this.elements.messagesContainer.appendChild(messageElement);
-            this.scrollToBottom();
-        }
-    }
-
-    // ===== UTILITIES =====
-    showToast(message, type = 'info', duration = 4000) {
-        if (!this.isInitialized) {
-            console.log(`Toast (suppressed during init): ${message} (${type})`);
-            return;
-        }
-
-        if (!this.elements.toastContainer) {
-            console.log(`Toast: ${message} (${type})`);
-            return;
-        }
+        this.elements.sendBtn.disabled = true;
+        this.elements.sendBtn.querySelector('.send-icon').classList.add('hidden');
+        this.elements.sendBtn.querySelector('.loading-icon').classList.remove('hidden');
 
         try {
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-
-            const icon = this.getToastIcon(type);
-            const closeBtn = document.createElement('button');
-            closeBtn.className = 'toast-close';
-            closeBtn.innerHTML = '✕';
-
-            toast.innerHTML = `
-                <div class="toast-icon">${icon}</div>
-                <div class="toast-content">${message}</div>
-                ${closeBtn.outerHTML}
-            `;
-
-            this.elements.toastContainer.appendChild(toast);
-
-            // Auto remove
-            setTimeout(() => {
-                if (toast.parentElement) {
-                    toast.remove();
-                }
-            }, duration);
-
-            // Manual close
-            const closeButton = toast.querySelector('.toast-close');
-            if (closeButton) {
-                closeButton.addEventListener('click', () => {
-                    toast.remove();
-                });
+            if (this.socket) {
+                this.socket.emit('send_message', { message: message });
             }
         } catch (error) {
-            console.error('Toast error:', error);
+            console.error('Error sending message:', error);
+            this.showToast('Failed to send message', 'error');
+            this.elements.sendBtn.disabled = false;
+            this.elements.sendBtn.querySelector('.send-icon').classList.remove('hidden');
+            this.elements.sendBtn.querySelector('.loading-icon').classList.add('hidden');
         }
     }
 
-    getToastIcon(type) {
-        const icons = {
-            success: '✓',
-            error: '✕',
-            warning: '⚠️',
-            info: 'ℹ️'
-        };
-        return icons[type] || icons.info;
+    addUserMessage(text) {
+        const clone = this.elements.userMessageTemplate.content.cloneNode(true);
+        const contentDiv = clone.querySelector('.message-content');
+        const timeSpan = clone.querySelector('span');
+
+        contentDiv.textContent = text;
+        timeSpan.textContent = this.getFormattedTime();
+
+        this.elements.messagesContainer.appendChild(clone);
+        this.scrollToBottom();
     }
 
-    formatMarkdown(text) {
-        // Basic markdown formatting
-        return text
-            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-            .replace(/\*(.*?)\*/g, '<em>$1</em>')
-            .replace(/`(.*?)`/g, '<code>$1</code>')
-            .replace(/\n/g, '<br>');
+    addAIMessage(text, sources = []) {
+        const clone = this.elements.aiMessageTemplate.content.cloneNode(true);
+        const contentDiv = clone.querySelector('.message-content');
+        const sourcesDiv = clone.querySelector('.message-sources');
+        const timeSpan = clone.querySelector('span');
+
+        try {
+            const html = marked(text);
+            contentDiv.innerHTML = html;
+        } catch (error) {
+            contentDiv.textContent = text;
+        }
+
+        if (sources && sources.length > 0) {
+            sourcesDiv.innerHTML = '';
+            sources.forEach(source => {
+                const sourceClone = this.elements.sourceLinkTemplate.content.cloneNode(true);
+                const link = sourceClone.querySelector('a');
+                const titleDiv = sourceClone.querySelector('.source-title');
+                const urlDiv = sourceClone.querySelector('.source-url');
+
+                link.href = source.url || '#';
+                titleDiv.textContent = source.title || 'Source';
+                urlDiv.textContent = source.url || '';
+
+                sourcesDiv.appendChild(sourceClone);
+            });
+        }
+
+        timeSpan.textContent = this.getFormattedTime();
+        this.elements.messagesContainer.appendChild(clone);
+        this.scrollToBottom();
+    }
+
+    addErrorMessage(text) {
+        const clone = this.elements.errorMessageTemplate.content.cloneNode(true);
+        const contentDiv = clone.querySelector('.message-content');
+        contentDiv.textContent = text;
+
+        this.elements.messagesContainer.appendChild(clone);
+        this.scrollToBottom();
+    }
+
+    connectSocket() {
+        try {
+            this.socket = io();
+
+            this.socket.on('connect', () => {
+                console.log('✅ Connected to server');
+                this.isConnected = true;
+                this.updateConnectionBadge('Connected', 'connected');
+                this.completeInitialization();
+            });
+
+            this.socket.on('disconnect', () => {
+                console.log('❌ Disconnected from server');
+                this.isConnected = false;
+                this.updateConnectionBadge('Disconnected', 'disconnected');
+            });
+
+            this.socket.on('final_response', (data) => {
+                this.handleResponse(data);
+            });
+
+            this.socket.on('error', (error) => {
+                console.error('❌ Socket error:', error);
+                this.addErrorMessage(error.message || 'An error occurred');
+                this.showToast('Error: ' + (error.message || 'Unknown error'), 'error');
+            });
+        } catch (error) {
+            console.error('❌ Socket connection error:', error);
+            this.addErrorMessage('Failed to connect to server');
+            this.completeInitialization();
+        }
+    }
+
+    handleResponse(data) {
+        this.elements.sendBtn.disabled = false;
+        this.elements.sendBtn.querySelector('.send-icon').classList.remove('hidden');
+        this.elements.sendBtn.querySelector('.loading-icon').classList.add('hidden');
+
+        if (data.error) {
+            this.addErrorMessage(data.error);
+            this.showToast(data.error, 'error');
+        } else {
+            this.addAIMessage(data.text || data.response || '', data.sources || []);
+            this.showToast('Response received', 'success');
+        }
+    }
+
+    updateConnectionBadge(text, status) {
+        if (!this.elements.connectionBadge) return;
+
+        this.elements.connectionBadge.className = 'flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200';
+        
+        if (status === 'connected') {
+            this.elements.connectionBadge.classList.add('bg-green-50', 'dark:bg-green-900/30', 'text-green-700', 'dark:text-green-300');
+        } else if (status === 'connecting') {
+            this.elements.connectionBadge.classList.add('bg-blue-50', 'dark:bg-blue-900/30', 'text-blue-700', 'dark:text-blue-300');
+        } else {
+            this.elements.connectionBadge.classList.add('bg-red-50', 'dark:bg-red-900/30', 'text-red-700', 'dark:text-red-300');
+        }
+
+        if (this.elements.connectionText) {
+            this.elements.connectionText.textContent = text;
+        }
+    }
+
+    clearConversation() {
+        if (!confirm('Are you sure you want to clear the conversation? This cannot be undone.')) {
+            return;
+        }
+
+        this.messageHistory = [];
+        this.elements.messagesContainer.innerHTML = '';
+        this.elements.welcomeScreen.style.display = 'flex';
+        this.showToast('Conversation cleared', 'success');
+
+        if (this.socket) {
+            this.socket.emit('clear_history');
+        }
     }
 
     scrollToBottom() {
         setTimeout(() => {
-            if (this.elements.messagesArea) {
-                this.elements.messagesArea.scrollTop = this.elements.messagesArea.scrollHeight;
-            }
+            this.elements.messagesContainer.scrollIntoView({ behavior: 'smooth', block: 'end' });
         }, 100);
     }
 
-    // ===== EVENT HANDLERS =====
-    handleBeforeUnload() {
-        if (this.socket && this.isConnected) {
-            this.socket.disconnect();
+    showToast(message, type = 'info') {
+        const toast = document.createElement('div');
+        toast.className = `px-4 py-3 rounded-lg font-medium text-sm animate-slide-in transition-all duration-300`;
+
+        switch (type) {
+            case 'success':
+                toast.classList.add('bg-green-50', 'dark:bg-green-900/30', 'text-green-700', 'dark:text-green-300');
+                break;
+            case 'error':
+                toast.classList.add('bg-red-50', 'dark:bg-red-900/30', 'text-red-700', 'dark:text-red-300');
+                break;
+            case 'warning':
+                toast.classList.add('bg-yellow-50', 'dark:bg-yellow-900/30', 'text-yellow-700', 'dark:text-yellow-300');
+                break;
+            default:
+                toast.classList.add('bg-blue-50', 'dark:bg-blue-900/30', 'text-blue-700', 'dark:text-blue-300');
         }
+
+        toast.innerHTML = `
+            <div class="flex items-center gap-2">
+                ${this.getToastIcon(type)}
+                <span>${this.escapeHtml(message)}</span>
+            </div>
+        `;
+
+        this.elements.toastContainer.appendChild(toast);
+
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateY(10px)';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
     }
 
-    handleWindowFocus() {
-        if (this.elements.messageInput && this.isInitialized) {
-            try {
-                this.elements.messageInput.focus();
-            } catch (error) {
-                // Ignore focus errors
-            }
-        }
+    getToastIcon(type) {
+        const icons = {
+            success: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>',
+            error: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>',
+            warning: '<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18.101 12.93a1 1 0 00-1.4-1.42L10 14.585 3.299 8.93a1 1 0 00-1.4 1.42l7.776 7.776a1 1 0 001.4 0l11.026-11.026z" clip-rule="evenodd"/></svg>',
+        };
+        return icons[type] || '';
     }
 
-    handleVisibilityChange() {
-        if (!document.hidden && this.elements.messageInput && this.isInitialized) {
-            try {
-                this.elements.messageInput.focus();
-            } catch (error) {
-                // Ignore focus errors
-            }
-        }
+    getFormattedTime() {
+        const now = new Date();
+        return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
 
-    handleGlobalKeydown(event) {
-        // Ctrl/Cmd + K to focus input
-        if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
-            event.preventDefault();
-            if (this.elements.messageInput) {
-                try {
-                    this.elements.messageInput.focus();
-                } catch (error) {
-                    // Ignore focus errors
-                }
-            }
-        }
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
 }
+
+// Initialize app when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    window.agenticAI = new AgenticAI();
+});
